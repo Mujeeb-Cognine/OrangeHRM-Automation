@@ -1,12 +1,12 @@
 import pytest
 from selenium.webdriver.remote.webdriver import WebDriver
 from DefaultData.OrangeHRMData import MenuItems, AdminUserRoles, AdminStatus
-from api_utils.admin_apis import AdminApis
-from api_utils.pim_apis import PIMApis
-from pages.AdminPage import AdminPage
-from pages.BasePageFargments import BasePageFragments
-from utils.BaseClass import BaseClass
-from utils.Dataset import Dataset
+from APIUtils.admin_apis import AdminApis
+from APIUtils.pim_apis import PIMApis
+from PageFragments.AdminPage import AdminPage
+from PageFragments.BasePageFragments import BasePageFragments
+from BaseUtils.BaseClass import BaseClass
+from BaseUtils.Dataset import Dataset
 
 
 @pytest.mark.usefixtures("admin_login")
