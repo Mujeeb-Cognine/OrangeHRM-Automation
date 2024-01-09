@@ -1,19 +1,21 @@
-name: Enforce Branch Name
+name: Enforce Branch Naming Convention
 
 on:
-  create:
-    branches:
-      - '*'
+  pull_request:
+    types:
+      - opened
+      - synchronize
 
 jobs:
-  enforce-branch-name:
+  enforce-naming-convention:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check Branch Name
+      - name: Check Branch Naming
         run: |
-          branch_name=${GITHUB_REF#refs/heads/}
-          if [[ ! $branch_name =~ ^test_.*$ ]]; then
+          branch_name=$(echo ${{ github.event.pull_request.head.ref }})
+
+          if [[ ! "$branch_name" =~ ^test_.*$ ]]; then
             echo "error: Branch name must start with 'test_'."
             exit 1
           fi
