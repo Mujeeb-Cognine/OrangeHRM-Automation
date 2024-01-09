@@ -1,0 +1,19 @@
+name: Enforce Branch Name
+
+on:
+  create:
+    branches:
+      - '*'
+
+jobs:
+  enforce-branch-name:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check Branch Name
+        run: |
+          branch_name=${GITHUB_REF#refs/heads/}
+          if [[ ! $branch_name =~ ^test_.*$ ]]; then
+            echo "error: Branch name must start with 'test_'."
+            exit 1
+          fi

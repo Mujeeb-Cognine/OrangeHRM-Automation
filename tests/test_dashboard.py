@@ -2,10 +2,10 @@ import time
 
 import pytest
 from selenium.webdriver.remote.webdriver import WebDriver
-from api_utils.dashboard_apis import DashBoardApis
-from pages.BasePageFargments import BasePageFragments
-from pages.DashboardPage import DashboardPage
-from utils.BaseClass import BaseClass
+from APIUtils.dashboard_apis import DashBoardApis
+from PageFragments.BasePageFragments import BasePageFragments
+from PageFragments.DashboardPage import DashboardPage
+from BaseUtils.BaseClass import BaseClass
 
 
 @pytest.mark.usefixtures("admin_login")
