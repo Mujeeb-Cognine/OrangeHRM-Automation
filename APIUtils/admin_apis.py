@@ -1,5 +1,5 @@
 import requests
-from tests.conftest import bearer, base_url
+from conftest import bearer, base_url
 
 
 class AdminApis:

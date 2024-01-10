@@ -1,21 +1,23 @@
-from selenium.webdriver.remote.webdriver import WebDriver
+import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from DefaultData.OrangeHRMData import TimeoutConstants
+from DriverWidgets.DriverInitialization import DriverInitialization
+from OrangeHRMData.Constants import Constants
 from PageFragments.BasePageFragments import BasePageFragments
 
 
+@pytest.mark.usefixtures("driver")
 class AdminPage(BasePageFragments):
 
-    def __init__(self, driver: WebDriver):
-        super().__init__(driver)
+    def __init__(self):
+        DriverInitialization.__init__(self)
 
     def add_user_page(self):
-        return AddUser(self.driver)
+        return AddUser()
 
     def wait_for_load(self):
-        WebDriverWait(self.driver, timeout=TimeoutConstants.default).until(
+        WebDriverWait(self.driver, timeout=Constants.short_live_throttle).until(
             EC.presence_of_all_elements_located((By.XPATH, "//div[@class='oxd-table-filter']")))
 
     def enter_user_name(self, user_name):
@@ -29,14 +31,14 @@ class AdminPage(BasePageFragments):
 
     def select_employee_name(self, emp_name):
         self.driver.find_element(By.XPATH, "//input[@placeholder='Type for hints...']").send_keys(emp_name)
-        WebDriverWait(self.driver, timeout=TimeoutConstants.default).until(
+        WebDriverWait(self.driver, timeout=Constants.short_live_throttle).until(
             EC.presence_of_element_located((By.XPATH, f"//span[contains(text(), '{emp_name}')]")))
         self.driver.find_element(By.XPATH, f"//span[contains(text(), '{emp_name}')]").click()
 
     def select_satus(self, option_name):
         self.driver.find_element(By.XPATH,
                                  "(//i[@class='oxd-icon bi-caret-down-fill oxd-select-text--arrow'])[2]").click()
-        WebDriverWait(self.driver, timeout=TimeoutConstants.default).until(
+        WebDriverWait(self.driver, timeout=Constants.short_live_throttle).until(
             EC.presence_of_element_located((By.XPATH, f"//span[contains(text(), '{option_name}')]")))
         self.driver.find_element(By.XPATH, f"//span[contains(text(), '{option_name}')]").click()
 
@@ -45,7 +47,7 @@ class AdminPage(BasePageFragments):
 
     def search_system_user_by_username(self, username):
         self.enter_user_name(username)
-        WebDriverWait(self.driver, timeout=TimeoutConstants.default).until(
+        WebDriverWait(self.driver, timeout=Constants.short_live_throttle).until(
             EC.presence_of_element_located((By.XPATH, "//button[@type='submit']")))
         self.click_submit_btn()
 
@@ -65,7 +67,7 @@ class AdminPage(BasePageFragments):
         self.driver.find_element(By.XPATH, "//button//i[contains(@class,'bi-plus')]").click()
 
     def wait_for_add_user_page_load(self):
-        WebDriverWait(self.driver, timeout=TimeoutConstants.default).until(
+        WebDriverWait(self.driver, timeout=Constants.short_live_throttle).until(
             EC.presence_of_element_located((By.XPATH, "//div[@class='orangehrm-card-container']")))
 
     def run_add_user_card(self, user_role=None, emp_name=None, status=None, user_name=None, password=None,
@@ -87,9 +89,6 @@ class AdminPage(BasePageFragments):
 
 
 class AddUser(AdminPage):
-
-    def __init__(self, driver: WebDriver):
-        super().__init__(driver)
 
     def enter_add_user_user_name(self, user_name):
         self.driver.find_element(By.XPATH, "(//input[@class='oxd-input oxd-input--active'])[2]").send_keys(user_name)
