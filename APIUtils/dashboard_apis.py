@@ -1,5 +1,5 @@
 import requests
-from tests.conftest import base_url, bearer
+from conftest import base_url, bearer
 
 
 class DashBoardApis:

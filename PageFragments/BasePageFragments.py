@@ -1,14 +1,23 @@
-from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from DefaultData.OrangeHRMData import TimeoutConstants
+from DriverWidgets.DriverInitialization import DriverInitialization
+from OrangeHRMData.Constants import Constants
 
 
-class BasePageFragments:
+class BasePageFragments(DriverInitialization):
 
-    def __init__(self, driver: WebDriver):
-        self.driver = driver
+    def __init__(self):
+        DriverInitialization.__init__(self)
+
+    def verify_element_presence(self, element_locator):
+        try:
+            WebDriverWait(self.driver, timeout=Constants.short_live_throttle).until(
+                EC.presence_of_element_located(element_locator))
+            return True
+        except TimeoutException:
+            return False
 
     def navigate_to_menu(self, menu_name):
         menu_button = self.driver.find_element(By.XPATH, "//button[contains(@class, 'oxd-main-menu-button')]")
@@ -16,18 +25,18 @@ class BasePageFragments:
             self.driver.find_element(By.XPATH, f"//span[normalize-space()='{menu_name}']").click()
         else:
             menu_button.click()
-            WebDriverWait(self.driver, timeout=TimeoutConstants.default).until(
+            WebDriverWait(self.driver, timeout=Constants.short_live_throttle).until(
                 EC.presence_of_all_elements_located((By.XPATH, "//li[@class='oxd-main-menu-item-wrapper']")))
             self.driver.find_element(By.XPATH, f"//span[normalize-space()='{menu_name}']").click()
 
-    def search_and_select_menu(self,menu_name):
+    def search_and_select_menu(self, menu_name):
         menu_button = self.driver.find_element(By.XPATH, "//button[contains(@class, 'oxd-main-menu-button')]")
         if "bi-chevron-left" not in menu_button.get_attribute("class"):
             self.driver.find_element(By.XPATH, "//input[@placeholder='Search']").send_keys(menu_name)
             self.driver.find_element(By.XPATH, "//ul[@class='oxd-main-menu']").click()
         else:
             menu_button.click()
-            WebDriverWait(self.driver, timeout=TimeoutConstants.default).until(
+            WebDriverWait(self.driver, timeout=Constants.short_live_throttle).until(
                 EC.presence_of_element_located((By.XPATH, "//ul[@class='oxd-main-menu']")))
             self.driver.find_element(By.XPATH, "//input[@placeholder='Search']").send_keys(menu_name)
             self.driver.find_element(By.XPATH, "//ul[@class='oxd-main-menu']").click()
@@ -51,22 +60,22 @@ class BasePageFragments:
             By.XPATH, "//div[contains(@class,'orangehrm-dialog-popup')]//button[@type='button'][1]").click()
 
     def wait_until_grid_loads(self):
-        WebDriverWait(self.driver, timeout=TimeoutConstants.default).until(
+        WebDriverWait(self.driver, timeout=Constants.short_live_throttle).until(
             EC.presence_of_element_located((By.XPATH, "//div[@class ='oxd-table-body']")))
 
     def wait_until_confirmation_dialog_appears(self):
-        WebDriverWait(self.driver, timeout=TimeoutConstants.default).until(
+        WebDriverWait(self.driver, timeout=Constants.short_live_throttle).until(
             EC.presence_of_element_located((By.XPATH, "//div[contains(@class,'orangehrm-dialog-popup')]")))
 
     def verify_success(self):
-        WebDriverWait(self.driver, timeout=TimeoutConstants.minimum).until(
+        WebDriverWait(self.driver, timeout=Constants.short_live_throttle).until(
             EC.presence_of_element_located((By.XPATH,
                                             "//div[contains(@class,'oxd-toast-container')]//p[text()='Success']")))
         (self.driver.find_element(By.XPATH, "//div[contains(@class,'oxd-toast-container')]//p[text()='Success']")
          .is_displayed())
 
     def wait_until_orng_hrm_dialog_appears(self):
-        WebDriverWait(self.driver, timeout=TimeoutConstants.default).until(
+        WebDriverWait(self.driver, timeout=Constants.short_live_throttle).until(
             EC.presence_of_element_located((
                 By.XPATH, "//div[contains(@class,'orangehrm-dialog-modal')]//button[@type='button']")))
 
@@ -74,7 +83,7 @@ class BasePageFragments:
         self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
 
     def click_toggle_switch(self):
-        WebDriverWait(self.driver, timeout=TimeoutConstants.half_min).until(
+        WebDriverWait(self.driver, timeout=Constants.default_throttle).until(
             EC.presence_of_element_located((By.XPATH, "//span[contains(@class,'oxd-switch-input')]")))
         self.driver.find_element(By.XPATH, "//span[contains(@class,'oxd-switch-input')]").click()
 
