@@ -3,7 +3,7 @@ from APIUtils.admin_apis import AdminApis
 from APIUtils.pim_apis import PIMApis
 from PageFragments.AdminPage import AdminPage
 from PageFragments.BasePageFragments import BasePageFragments
-from BaseUtils.BaseClass import BaseClass
+from _Wrapper.BaseClass import BaseClass
 from BaseUtils.Dataset import Dataset
 
 

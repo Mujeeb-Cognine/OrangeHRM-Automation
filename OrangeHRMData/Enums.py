@@ -1,7 +1,7 @@
-from enum import Enum
+from OrangeHRMData._BaseLocalizationClass import _BaseNoLocalizationClass
 
 
-class ApiStatusCodes(Enum):
+class ApiStatusCodes(_BaseNoLocalizationClass):
     # 1xx Status Codes [Informational]
     CONTINUE = 100
     SWITCHING_PROTOCOL = 101
@@ -76,7 +76,7 @@ class ApiStatusCodes(Enum):
     NETWORK_AUTHENTICATION_REQUIRED = 511
 
 
-class ActionKeys(object):
+class ActionKeys(_BaseNoLocalizationClass):
     ADD = '\ue025'
     ALT = '\ue00a'
     ARROW_DOWN = '\ue015'

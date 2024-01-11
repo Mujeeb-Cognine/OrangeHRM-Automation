@@ -4,7 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from BaseUtils.BaseClass import BaseClass
+from _Wrapper.BaseClass import BaseClass
 from OrangeHRMData.Constants import Constants
 
 base_url = 'https://opensource-demo.orangehrmlive.com/web/index.php'
