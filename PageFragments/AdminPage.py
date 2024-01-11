@@ -2,7 +2,7 @@ import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from DriverWidgets.DriverInitialization import DriverInitialization
+from BaseUtils.BaseClass import BaseClass
 from OrangeHRMData.Constants import Constants
 from PageFragments.BasePageFragments import BasePageFragments
 
@@ -11,7 +11,8 @@ from PageFragments.BasePageFragments import BasePageFragments
 class AdminPage(BasePageFragments):
 
     def __init__(self):
-        DriverInitialization.__init__(self)
+        BaseClass.__init__(self)
+        super().__init__()
 
     def add_user_page(self):
         return AddUser()

@@ -1,11 +1,13 @@
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 
+from BaseUtils.BaseClass import BaseClass
+from PageFragments.BasePageFragments import BasePageFragments
 
-class DashboardPage:
 
-    def __init__(self, driver: WebDriver):
-        self.driver = driver
+class DashboardPage(BasePageFragments):
+
+    def __init__(self):
+        BaseClass.__init__(self)
 
     dashboard_cards = (By.XPATH, "//div[contains(@class,'orangehrm-dashboard-widget-body')]")
     gear_icon = (By.XPATH, "//div[contains(@class,'emp-leave-chart')]//i")

@@ -4,8 +4,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from BaseUtils.BaseClass import BaseClass
 from OrangeHRMData.Constants import Constants
-from DriverWidgets.DriverInitialization import DriverInitialization
 
 base_url = 'https://opensource-demo.orangehrmlive.com/web/index.php'
 bearer = os.environ.get("ORANGEHRM_BEARER_TOKEN", "")
@@ -28,14 +28,13 @@ def driver(request):
     else:
         raise ValueError(f"Invalid browser name: {browser_name}")
 
-    driver.get(base_url)
-    driver.maximize_window()
     # Set the driver in the BaseFragment class
-    DriverInitialization.set_driver(driver)
+    BaseClass.set_driver(driver)
+    BaseClass.navigate_to_url(base_url)
     yield driver  # Return the driver instance
 
     # Tear down after the test
-    driver.quit()
+    BaseClass.quit_browser()
 
 
 @pytest.fixture
