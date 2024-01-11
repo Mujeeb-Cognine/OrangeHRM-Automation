@@ -2,7 +2,7 @@ import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from BaseUtils.BaseClass import BaseClass
+from _Wrapper.BaseClass import BaseClass
 from OrangeHRMData.Constants import Constants
 from PageFragments.BasePageFragments import BasePageFragments
 
@@ -18,38 +18,35 @@ class AdminPage(BasePageFragments):
         return AddUser()
 
     def wait_for_load(self):
-        WebDriverWait(self.driver, timeout=Constants.short_live_throttle).until(
-            EC.presence_of_all_elements_located((By.XPATH, "//div[@class='oxd-table-filter']")))
+        self.wait_for_all_elements_presence(elements_locator="//div[@class='oxd-table-filter']")
 
     def enter_user_name(self, user_name):
-        self.driver.find_element(By.XPATH, "//div[@class='oxd-input-group "
-                                           "oxd-input-field-bottom-space']/div/input").send_keys(user_name)
+        self.send_keys_to_element(element_locator="//div[@class='oxd-input-group "
+                                                  "oxd-input-field-bottom-space']/div/input", keys=user_name)
 
     def select_user_role(self, user_role):
-        self.driver.find_element(By.XPATH,
-                                 "(//i[@class='oxd-icon bi-caret-down-fill oxd-select-text--arrow'])[1]").click()
-        self.driver.find_element(By.XPATH, f"//span[contains(text(), '{user_role}')]").click()
+        self.click_element("(//i[@class='oxd-icon bi-caret-down-fill "
+                           "oxd-select-text--arrow'])[1]")
+        self.click_element(f"//span[contains(text(), '{user_role}')]")
 
     def select_employee_name(self, emp_name):
-        self.driver.find_element(By.XPATH, "//input[@placeholder='Type for hints...']").send_keys(emp_name)
-        WebDriverWait(self.driver, timeout=Constants.short_live_throttle).until(
-            EC.presence_of_element_located((By.XPATH, f"//span[contains(text(), '{emp_name}')]")))
-        self.driver.find_element(By.XPATH, f"//span[contains(text(), '{emp_name}')]").click()
+        self.send_keys_to_element("//input[@placeholder='Type for hints...']",
+                                  keys=emp_name)
+        self.wait_for_element_presence(element_locator=f"//span[contains(text(), '{emp_name}')]")
+        self.click_element(f"//span[contains(text(), '{emp_name}')]")
 
     def select_satus(self, option_name):
-        self.driver.find_element(By.XPATH,
-                                 "(//i[@class='oxd-icon bi-caret-down-fill oxd-select-text--arrow'])[2]").click()
-        WebDriverWait(self.driver, timeout=Constants.short_live_throttle).until(
-            EC.presence_of_element_located((By.XPATH, f"//span[contains(text(), '{option_name}')]")))
-        self.driver.find_element(By.XPATH, f"//span[contains(text(), '{option_name}')]").click()
+        self.click_element("(//i[@class='oxd-icon bi-caret-down-fill "
+                           "oxd-select-text--arrow'])[2]")
+        self.wait_for_element_presence(element_locator=f"//span[contains(text(), '{option_name}')]")
+        self.click_element(f"//span[contains(text(), '{option_name}')]")
 
     def click_submit_btn(self):
-        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        self.click_element("//button[@type='submit']")
 
     def search_system_user_by_username(self, username):
         self.enter_user_name(username)
-        WebDriverWait(self.driver, timeout=Constants.short_live_throttle).until(
-            EC.presence_of_element_located((By.XPATH, "//button[@type='submit']")))
+        self.wait_for_element_presence(element_locator="//button[@type='submit']")
         self.click_submit_btn()
 
     def search_system_user_by_user_role(self, user_role):
@@ -65,11 +62,10 @@ class AdminPage(BasePageFragments):
         self.click_submit_btn()
 
     def click_add_button(self):
-        self.driver.find_element(By.XPATH, "//button//i[contains(@class,'bi-plus')]").click()
+        self.click_element(element_locator="//button//i[contains(@class,'bi-plus')]")
 
     def wait_for_add_user_page_load(self):
-        WebDriverWait(self.driver, timeout=Constants.short_live_throttle).until(
-            EC.presence_of_element_located((By.XPATH, "//div[@class='orangehrm-card-container']")))
+        self.wait_for_element_presence(element_locator="//div[@class='orangehrm-card-container']")
 
     def run_add_user_card(self, user_role=None, emp_name=None, status=None, user_name=None, password=None,
                           confirm_password=None, save=None):
@@ -92,10 +88,13 @@ class AdminPage(BasePageFragments):
 class AddUser(AdminPage):
 
     def enter_add_user_user_name(self, user_name):
-        self.driver.find_element(By.XPATH, "(//input[@class='oxd-input oxd-input--active'])[2]").send_keys(user_name)
+        self.send_keys_to_element(element_locator="(//input[@class='oxd-input "
+                                                  "oxd-input--active'])[2]", keys=user_name)
 
     def enter_password(self, password):
-        self.driver.find_element(By.XPATH, "(//input[@type='password'])[1]").send_keys(password)
+        self.send_keys_to_element(element_locator="(//input[@type='password'])[1]",
+                                  keys=password)
 
     def enter_confirm_password(self, confirm_password):
-        self.driver.find_element(By.XPATH, "(//input[@type='password'])[2]").send_keys(confirm_password)
+        self.send_keys_to_element(element_locator="(//input[@type='password'])[2]",
+                                  keys=confirm_password)

@@ -10,7 +10,7 @@ class _BaseLocalizationClass(object):
     The localized classes inside these files need to extend the default class of the same name.
 
     Language string format uses a combination of ISO 639-1 two-letter language codes,
-    followed by the ISO 3166-1 two letter country codes (if applicable) (separated by underscore)
+    followed by the ISO 3166-1 two-letter country codes (if applicable) (separated by underscore)
     Examples: en_US (English - United States), en_GB (English - Great Britain, fr (French - France),
               fr_CA (French - Canada), es (Spanish - Spain), ex_PR (Spanish - Puerto Rico) pt (Portuguese - Portugal),
               pt_BR (Portuguese - Brazil)
