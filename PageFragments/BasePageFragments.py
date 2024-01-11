@@ -1,15 +1,16 @@
+import time
 from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from DriverWidgets.DriverInitialization import DriverInitialization
+from BaseUtils.BaseClass import BaseClass
 from OrangeHRMData.Constants import Constants
 
 
-class BasePageFragments(DriverInitialization):
+class BasePageFragments(BaseClass):
 
     def __init__(self):
-        DriverInitialization.__init__(self)
+        BaseClass.__init__(self)
 
     def verify_element_presence(self, element_locator):
         try:
@@ -84,7 +85,8 @@ class BasePageFragments(DriverInitialization):
 
     def click_toggle_switch(self):
         WebDriverWait(self.driver, timeout=Constants.default_throttle).until(
-            EC.presence_of_element_located((By.XPATH, "//span[contains(@class,'oxd-switch-input')]")))
+            EC.presence_of_element_located((By.XPATH, "//div[contains(@class,'oxd-switch-wrapper')]//label//span")))
+        time.sleep(2)  # Added sleep as it is taking time to render on the UI.
         self.driver.find_element(By.XPATH, "//span[contains(@class,'oxd-switch-input')]").click()
 
     def click_cancel(self):

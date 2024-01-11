@@ -1,4 +1,6 @@
 import requests
+
+from OrangeHRMData.Enums import ApiStatusCodes
 from conftest import base_url, bearer
 
 
@@ -20,7 +22,7 @@ class PIMApis:
         print(f"Response: {response.text}")
 
         # Check if the request was successful (status code 200)
-        if response.status_code == 200:
+        if response.status_code == ApiStatusCodes.SUCCESS:
             json_response = response.json()
             emp_number = json_response.get('data', {}).get('empNumber')
             print(f"The employee number is: {emp_number}")

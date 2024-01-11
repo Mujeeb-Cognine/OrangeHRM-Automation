@@ -39,19 +39,17 @@ class TestAdmin(BaseClass):
         # Creating a user with the created employee.
         AdminApis().create_user(username=test_data.user_name, password=test_data.password, empNumber=emp_num)
 
-        base_page_fragments = BasePageFragments(driver)
         # Navigating to the Admin Side menu.
-        base_page_fragments.navigate_to_menu(menu_name=self.s.menu.admin)
+        BasePageFragments().navigate_to_menu(menu_name=self.s.menu.admin)
 
-        admin_page = AdminPage(driver)
-        admin_page.wait_for_load()
+        AdminPage().wait_for_load()
         # Searching for the created User.
-        admin_page.search_system_user_by_username(test_data.user_name)
-        base_page_fragments.wait_until_grid_loads()
+        AdminPage().search_system_user_by_username(test_data.user_name)
+        BasePageFragments().wait_until_grid_loads()
 
         # Deleting the User.
-        base_page_fragments.click_delete_icon()
-        base_page_fragments.wait_until_confirmation_dialog_appears()
-        base_page_fragments.click_yes_or_delete_in_dialog()
+        BasePageFragments().click_delete_icon()
+        BasePageFragments().wait_until_confirmation_dialog_appears()
+        BasePageFragments().click_yes_or_delete_in_dialog()
         # Verifying the Success.
-        base_page_fragments.verify_success()
+        BasePageFragments().verify_success()
