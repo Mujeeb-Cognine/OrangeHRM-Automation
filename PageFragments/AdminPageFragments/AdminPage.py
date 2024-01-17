@@ -1,4 +1,5 @@
 from Locators.AdminPageLocators import AdminUserLocators, AdminAddUserLocators
+from OrangeHRMData.Constants import Constants
 from _Wrapper.BaseClass import BaseClass
 from PageFragments.BasePageFragments.BasePageFragments import BasePageFragments
 
@@ -45,8 +46,9 @@ class AdminPage(BasePageFragments):
     def aad_user_card(self):
         return AdminUserLocators().add_user_card
 
-    def wait_for_load(self):
-        self.wait_for_all_elements_presence(elements_locator=self.system_user_card())
+    def wait_for_load(self, timeout=Constants.default_throttle):
+        self.verify(lambda: self.verify_element_present(self.system_user_card()),
+                    timeout=timeout, fail_message='No system user card is present')
 
     def enter_user_name(self, user_name):
         self.send_keys_to_element(element_locator=self.user_name_field(), keys=user_name)

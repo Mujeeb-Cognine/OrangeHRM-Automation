@@ -6,12 +6,11 @@ from PageFragments.DashboardPageFragments.DashboardPage import DashboardPage
 from _Wrapper.BaseClass import BaseClass
 
 
-@pytest.mark.usefixtures("admin_login")
 class TestDashboard(BaseClass):
 
     def test_verifying_card_in_dashboard(self):
         # Verifying the dashboard cards are present in the Dashboard Page.
-        self.wait_for_element_presence(element_locator=DashboardPage().dashboard_cards())
+        DashboardPage().wait_for_load()
 
     def test_change_employee_on_leave_today_config(self):
 
@@ -37,7 +36,7 @@ class TestDashboard(BaseClass):
             if retry_count == max_retries:
                 pytest.fail("API call failed after maximum retries. Test aborted.")
         # Verifying the dashboard cards are present in the Dashboard Page.
-        self.wait_for_element_presence(element_locator=DashboardPage().dashboard_cards())
+        DashboardPage().wait_for_load()
         self.wait_for_element_presence(element_locator=DashboardPage().emp_leave_card_gear_icon())
         # Clicking on employee leave card gear icon.
         self.click_element(element_locator=DashboardPage().emp_leave_card_gear_icon())

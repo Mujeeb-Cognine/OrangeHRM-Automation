@@ -24,3 +24,32 @@ class Strings(object):
     @property
     def dd(self):
         return self.default_data
+
+    @property
+    def constants(self):
+        try:
+            return self.__constants
+        except AttributeError:
+            from OrangeHRMData.Constants import Constants
+            self.__constants = Constants(os_locale=self._locale)
+            return self.__constants
+
+    @property
+    def api_status(self):
+        try:
+            return self.__api_status
+        except AttributeError:
+            from OrangeHRMData.Enums import ApiStatusCodes
+            self.__api_status = ApiStatusCodes(os_locale=self._locale)
+            return self.__api_status
+
+    @property
+    def actions(self):
+        try:
+            return self.__actions
+        except AttributeError:
+            from OrangeHRMData.Enums import ActionKeys
+            self.__actions = ActionKeys(os_locale=self._locale)
+            return self.__actions
+
+

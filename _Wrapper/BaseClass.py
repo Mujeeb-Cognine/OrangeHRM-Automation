@@ -1,3 +1,4 @@
+import os
 import pytest
 import win32clipboard
 import inspect
@@ -23,6 +24,8 @@ from OrangeHRMData.Constants import Constants
 class BaseClass:
     # Class variable to store the driver
     driver = None
+    # Class variable to store the base_url
+    _base_url = None
     # Create a logger instance
     logger = logging.getLogger(__name__)
     # Create a LoggerAdapter instance
@@ -43,10 +46,22 @@ class BaseClass:
         cls.const = Constants()
 
     @classmethod
-    def navigate_to_url(cls, url: str):
+    def set_base_url(cls, url):
+        cls._base_url = url
+
+    @classmethod
+    def get_base_url(cls):
+        return cls._base_url
+
+    @classmethod
+    def get_bearer_token(cls):
+        return os.getenv("bearer")
+
+    @classmethod
+    def navigate_to_url(cls):
         if not cls.driver:
             raise ValueError("Driver not initialized. Call set_driver() first.")
-        cls.driver.get(url)
+        cls.driver.get(cls.get_base_url())
         cls.driver.maximize_window()
 
     @classmethod
@@ -688,6 +703,22 @@ class BaseClass:
             return False
         except TimeoutException as e:
             cls.logger.error(f"Timeout waiting for element located by {element_locator}. {e}")
+            return False
+        except Exception as e:
+            cls.logger.error(f"An unexpected error occurred: {e}")
+            return False
+
+    @classmethod
+    def verify_elements_present(cls, elements_locator):
+        try:
+            cls.find_elements(elements_locator)
+            cls.logger.info(f"Element located by {elements_locator} is present.")
+            return True
+        except NoSuchElementException as e:
+            cls.logger.error(f"Element located by {elements_locator} is not present. {e}")
+            return False
+        except TimeoutException as e:
+            cls.logger.error(f"Timeout waiting for element located by {elements_locator}. {e}")
             return False
         except Exception as e:
             cls.logger.error(f"An unexpected error occurred: {e}")

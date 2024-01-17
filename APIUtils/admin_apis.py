@@ -1,8 +1,9 @@
 import requests
-from conftest import bearer, base_url
+
+from _Wrapper.BaseClass import BaseClass
 
 
-class AdminApis:
+class AdminApis(BaseClass):
 
     def create_user(self, username, password, empNumber, status=True, userRoleId=2):
         """
@@ -23,9 +24,9 @@ class AdminApis:
         headers = {
             "accept": "application/json",
             "content-type": "application/json",
-            "authorization": bearer
+            "authorization": self.get_bearer_token()
         }
 
-        response = requests.post(f'{base_url}/api/v2/admin/users', json=payload, headers=headers)
+        response = requests.post(f'{self.get_base_url()}/api/v2/admin/users', json=payload, headers=headers)
 
         print(response.text)
