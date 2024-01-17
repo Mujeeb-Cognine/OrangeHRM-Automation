@@ -1,3 +1,5 @@
+import time
+
 import pytest
 from APIUtils.admin_apis import AdminApis
 from APIUtils.pim_apis import PIMApis
@@ -7,7 +9,7 @@ from _Wrapper.BaseClass import BaseClass
 from BaseUtils.Dataset import Dataset
 
 
-@pytest.mark.usefixtures("admin_login", "driver")
+#
 class TestAdmin(BaseClass):
 
     def test_add_user(self):
@@ -30,10 +32,12 @@ class TestAdmin(BaseClass):
         # Verifying the Success.
         BasePageFragments().verify_success()
 
-    def test_user_delete(self, driver):
+    # Override the admin_login fixture for this test method
+    def test_user_delete(self):
         # Creating the test data.
         test_data = Dataset()
         # Creating an employee.
+
         emp_num = PIMApis().create_employee(last_name=test_data.last_name, first_name=test_data.first_name,
                                             employee_id=test_data.emp_id)
         # Creating a user with the created employee.

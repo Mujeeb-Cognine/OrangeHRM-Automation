@@ -1,4 +1,7 @@
-class Constants(object):
+from OrangeHRMData._BaseLocalizationClass import _BaseNoLocalizationClass
+
+
+class Constants(_BaseNoLocalizationClass):
     two_min_throttle = 120
     long_throttle = 60
     medium_throttle = 40

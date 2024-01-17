@@ -1,8 +1,9 @@
 import requests
-from conftest import base_url, bearer
+
+from _Wrapper.BaseClass import BaseClass
 
 
-class DashBoardApis:
+class DashBoardApis(BaseClass):
 
     def config_employees_on_leave_today(self, show_only_accessible_employees_on_leave_today= False):
 
@@ -10,9 +11,9 @@ class DashBoardApis:
         headers = {
             "accept": "application/json",
             "content-type": "application/json",
-            "authorization": bearer
+            "authorization": self.get_bearer_token()
         }
 
-        response = requests.put(f'{base_url}/api/v2/admin/users', json=payload, headers=headers)
+        response = requests.put(f'{self.get_base_url()}/api/v2/admin/users', json=payload, headers=headers)
 
         print(response.text)

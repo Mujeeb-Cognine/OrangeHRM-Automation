@@ -1,10 +1,10 @@
 import requests
 
 from OrangeHRMData.Enums import ApiStatusCodes
-from conftest import base_url, bearer
+from _Wrapper.BaseClass import BaseClass
 
 
-class PIMApis:
+class PIMApis(BaseClass):
     def create_employee(self, last_name, first_name, employee_id, middle_name=''):
         payload = {
             "lastName": last_name,
@@ -15,9 +15,9 @@ class PIMApis:
         headers = {
             "accept": "application/json",
             "content-type": "application/json",
-            "authorization": bearer
+            "authorization": self.get_bearer_token()
         }
-        response = requests.post(f'{base_url}/api/v2/pim/employees', json=payload, headers=headers)
+        response = requests.post(f'{self.get_base_url()}/api/v2/pim/employees', json=payload, headers=headers)
         # Print response for debugging
         print(f"Response: {response.text}")
 
