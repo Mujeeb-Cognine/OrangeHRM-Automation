@@ -5,10 +5,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from APIUtils.admin_apis import AdminApis
-from APIUtils.pim_apis import PIMApis
+from APIUtils.AdminAPIs.UserAPIs import UserAPIs
+from APIUtils.PIMAPIs.EmployeeAPIs import EmployeeApis
 from BaseUtils.Dataset import Dataset
-from PageFragments.DashboardPageFragments.DashboardPage import DashboardPage
 from PageFragments.LoginPageFragments.LoginPage import LoginPage
 from _Wrapper.BaseClass import BaseClass
 from OrangeHRMData.Constants import Constants
@@ -47,13 +46,13 @@ def driver(request, base_url):
         raise ValueError(f"Invalid browser name: {browser_name}")
 
     # Set the driver in the BaseFragment class
-    BaseClass.set_driver(driver)
-    BaseClass.set_base_url(base_url)
-    BaseClass.navigate_to_url()
+    BaseClass().set_driver(driver)
+    BaseClass().set_base_url(base_url)
+    BaseClass().navigate_to_url()
     yield driver  # Return the driver instance
 
     # Tear down after the test
-    BaseClass.quit_browser()
+    BaseClass().quit_browser()
 
 
 @pytest.fixture(autouse=True)
@@ -61,10 +60,10 @@ def login(request, driver):
     if request.node.name.startswith("test_custom_user"):
         test_data = Dataset()
         # Creating an employee.
-        emp_num = PIMApis().create_employee(last_name=test_data.last_name, first_name=test_data.first_name,
+        emp_num = EmployeeApis().create_employee(last_name=test_data.last_name, first_name=test_data.first_name,
                                             employee_id=test_data.emp_id)
         # Creating a user with the created employee.
-        AdminApis().create_user(username=test_data.user_name, password=test_data.password, empNumber=emp_num)
+        UserAPIs().create_user(username=test_data.user_name, password=test_data.password, empNumber=emp_num)
         username = test_data.user_name
         password = test_data.password
     else:

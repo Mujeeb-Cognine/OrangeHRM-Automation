@@ -1,8 +1,5 @@
-import time
-
-import pytest
-from APIUtils.admin_apis import AdminApis
-from APIUtils.pim_apis import PIMApis
+from APIUtils.AdminAPIs.UserAPIs import UserAPIs
+from APIUtils.PIMAPIs.EmployeeAPIs import EmployeeApis
 from PageFragments.AdminPageFragments.AdminPage import AdminPage
 from PageFragments.BasePageFragments.BasePageFragments import BasePageFragments
 from _Wrapper.BaseClass import BaseClass
@@ -16,8 +13,8 @@ class TestAdmin(BaseClass):
         # Creating the test data.
         test_data = Dataset()
         # Creating an employee.
-        PIMApis().create_employee(last_name=test_data.last_name, first_name=test_data.first_name,
-                                  middle_name=test_data.middle_name, employee_id=test_data.emp_id)
+        EmployeeApis().create_employee(last_name=test_data.last_name, first_name=test_data.first_name,
+                                       middle_name=test_data.middle_name, employee_id=test_data.emp_id)
         # Navigating to the Admin Side menu.
         BasePageFragments().navigate_to_menu(menu_name=self.s.menu.admin)
 
@@ -38,10 +35,10 @@ class TestAdmin(BaseClass):
         test_data = Dataset()
         # Creating an employee.
 
-        emp_num = PIMApis().create_employee(last_name=test_data.last_name, first_name=test_data.first_name,
-                                            employee_id=test_data.emp_id)
+        emp_num = EmployeeApis().create_employee(last_name=test_data.last_name, first_name=test_data.first_name,
+                                                 employee_id=test_data.emp_id)
         # Creating a user with the created employee.
-        AdminApis().create_user(username=test_data.user_name, password=test_data.password, empNumber=emp_num)
+        UserAPIs().create_user(username=test_data.user_name, password=test_data.password, empNumber=emp_num)
 
         # Navigating to the Admin Side menu.
         BasePageFragments().navigate_to_menu(menu_name=self.s.menu.admin)

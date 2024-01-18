@@ -1,6 +1,6 @@
 import time
 import pytest
-from APIUtils.dashboard_apis import DashBoardApis
+from APIUtils.DashboardAPIs.WidgetsAPIs import WidgetsAPIs
 from PageFragments.BasePageFragments.BasePageFragments import BasePageFragments
 from PageFragments.DashboardPageFragments.DashboardPage import DashboardPage
 from _Wrapper.BaseClass import BaseClass
@@ -21,7 +21,7 @@ class TestDashboard(BaseClass):
 
             while retry_count < max_retries:
                 # API call
-                if DashBoardApis().config_employees_on_leave_today():
+                if WidgetsAPIs().config_employees_on_leave_today():
                     self.test_change_employee_on_leave_today_config()
                     # If API call is successful, break out of the loop and proceed with the test logic
                     break
