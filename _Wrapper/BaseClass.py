@@ -1,5 +1,4 @@
 import os
-import pytest
 import win32clipboard
 import inspect
 import logging
@@ -10,35 +9,18 @@ from selenium.common import NoSuchElementException, TimeoutException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from OrangeHRMData.Enums import ActionKeys
 from OrangeHRMData.Strings import Strings
-from logging import LoggerAdapter
 from OrangeHRMData.Constants import Constants
+from _Wrapper.DriverInitialization import DriverInitialization
 
 
-@pytest.mark.usefixtures("driver")
-class BaseClass:
-    # Class variable to store the driver
-    driver = None
+class BaseClass(DriverInitialization):
     # Class variable to store the base_url
     _base_url = None
-    # Create a logger instance
-    logger = logging.getLogger(__name__)
-    # Create a LoggerAdapter instance
-    logger_adapter = LoggerAdapter(logger, {"extra_key": "extra_value"})
-    # Now you can use logger_adapter for logging
-    logger_adapter.log(logging.INFO, "Failure Occurred")
-
-    @classmethod
-    def set_driver(cls, driver: WebDriver):
-        if not isinstance(driver, WebDriver):
-            raise TypeError("Invalid driver type. Must be an instance of WebDriver.")
-        cls.driver = driver
-        cls.logger.info("Driver successfully set.")
 
     @classmethod
     def setup(cls):
@@ -48,6 +30,7 @@ class BaseClass:
     @classmethod
     def set_base_url(cls, url):
         cls._base_url = url
+        cls.log_info("set_base_url got set")
 
     @classmethod
     def get_base_url(cls):
@@ -696,32 +679,32 @@ class BaseClass:
     def verify_element_present(cls, element_locator):
         try:
             cls.find_element(element_locator)
-            cls.logger.info(f"Element located by {element_locator} is present.")
+            cls.log_info(f"Element located by {element_locator} is present.")
             return True
         except NoSuchElementException as e:
-            cls.logger.error(f"Element located by {element_locator} is not present. {e}")
+            cls.log_error(f"Element located by {element_locator} is not present. {e}")
             return False
         except TimeoutException as e:
-            cls.logger.error(f"Timeout waiting for element located by {element_locator}. {e}")
+            cls.log_error(f"Timeout waiting for element located by {element_locator}. {e}")
             return False
         except Exception as e:
-            cls.logger.error(f"An unexpected error occurred: {e}")
+            cls.log_error(f"An unexpected error occurred: {e}")
             return False
 
     @classmethod
     def verify_elements_present(cls, elements_locator):
         try:
-            cls.find_elements(elements_locator)
-            cls.logger.info(f"Element located by {elements_locator} is present.")
+            cls.is_element_displayed(elements_locator)
+            cls.log_info(f"Element located by {elements_locator} is present.")
             return True
         except NoSuchElementException as e:
-            cls.logger.error(f"Element located by {elements_locator} is not present. {e}")
+            cls.log_error(f"Element located by {elements_locator} is not present. {e}")
             return False
         except TimeoutException as e:
-            cls.logger.error(f"Timeout waiting for element located by {elements_locator}. {e}")
+            cls.log_error(f"Timeout waiting for element located by {elements_locator}. {e}")
             return False
         except Exception as e:
-            cls.logger.error(f"An unexpected error occurred: {e}")
+            cls.log_error(f"An unexpected error occurred: {e}")
             return False
 
     @classmethod
@@ -730,10 +713,10 @@ class BaseClass:
         actual_text = element.text
         try:
             assert expected_text == actual_text
-            cls.logger.info(f"Text in element is as expected: {expected_text}")
+            cls.log_info(f"Text in element is as expected: {expected_text}")
             return True
         except AssertionError:
-            cls.logger.error(f"Text in element doesn't match. Expected: {expected_text}, Actual: {actual_text}")
+            cls.log_error(f"Text in element doesn't match. Expected: {expected_text}, Actual: {actual_text}")
             return False
 
     @classmethod
@@ -742,10 +725,10 @@ class BaseClass:
         actual_value = element.get_attribute(attribute)
         try:
             assert expected_value == actual_value
-            cls.logger.info(f"Attribute '{attribute}' has the expected value: {expected_value}")
+            cls.log_info(f"Attribute '{attribute}' has the expected value: {expected_value}")
             return True
         except AssertionError:
-            cls.logger.error(
+            cls.log_error(
                 f"Attribute '{attribute}' value does not match. Expected: {expected_value}, Actual: {actual_value}")
             return False
 
@@ -753,9 +736,9 @@ class BaseClass:
     def expect_element_present(cls, element_locator):
         try:
             cls.find_element(element_locator)
-            cls.logger.info(f"Element located by {element_locator} is present.")
+            cls.log_info(f"Element located by {element_locator} is present.")
         except AssertionError:
-            cls.logger.error(f"Element located by {element_locator} is not present.")
+            cls.log_error(f"Element located by {element_locator} is not present.")
             raise AssertionError(f"Element located by {element_locator} is not present.")
 
     @classmethod
@@ -764,9 +747,9 @@ class BaseClass:
         actual_text = element.text
         try:
             assert expected_text == actual_text
-            cls.logger.info(f"Text in element is as expected: {expected_text}")
+            cls.log_info(f"Text in element is as expected: {expected_text}")
         except AssertionError:
-            cls.logger.error(f"Text in element doesn't match. Expected: {expected_text}, Actual: {actual_text}")
+            cls.log_error(f"Text in element doesn't match. Expected: {expected_text}, Actual: {actual_text}")
             raise AssertionError(f"Text in element doesn't match. Expected: {expected_text}, Actual: {actual_text}")
 
     @classmethod
@@ -775,9 +758,9 @@ class BaseClass:
         actual_value = element.get_attribute(attribute)
         try:
             assert expected_value == actual_value
-            cls.logger.info(f"Attribute '{attribute}' has the expected value: {expected_value}")
+            cls.log_info(f"Attribute '{attribute}' has the expected value: {expected_value}")
         except AssertionError:
-            cls.logger.error(
+            cls.log_error(
                 f"Attribute '{attribute}' value does not match. Expected: {expected_value}, Actual: {actual_value}")
             raise AssertionError(
                 f"Attribute '{attribute}' value does not match. Expected: {expected_value}, Actual: {actual_value}")
@@ -786,9 +769,9 @@ class BaseClass:
     def verify_equal(cls, actual, expected, message=None):
         try:
             assert actual == expected, message
-            cls.logger.info(f"Verification passed: Actual value '{actual}' is equal to Expected value '{expected}'")
+            cls.log_info(f"Verification passed: Actual value '{actual}' is equal to Expected value '{expected}'")
         except AssertionError as e:
-            cls.logger.error(f"Verification failed: {str(e)}")
+            cls.log_error(f"Verification failed: {str(e)}")
             return False
         return True
 
@@ -796,10 +779,10 @@ class BaseClass:
     def verify_not_equal(cls, actual, not_expected, message=None):
         try:
             assert actual != not_expected, message
-            cls.logger.info(
+            cls.log_info(
                 f"Verification passed: Actual value '{actual}' is not equal to Not Expected value '{not_expected}'")
         except AssertionError as e:
-            cls.logger.error(f"Verification failed: {str(e)}")
+            cls.log_error(f"Verification failed: {str(e)}")
             return False
         return True
 
@@ -807,24 +790,24 @@ class BaseClass:
     def expect_equal(cls, actual, expected, message=None):
         try:
             assert actual == expected, message
-            cls.logger.info(f"Expectation passed: Actual value '{actual}' is equal to Expected value '{expected}'")
+            cls.log_info(f"Expectation passed: Actual value '{actual}' is equal to Expected value '{expected}'")
         except AssertionError as e:
-            cls.logger.error(f"Expectation failed: {str(e)}")
+            cls.log_error(f"Expectation failed: {str(e)}")
             raise AssertionError(str(e))
 
     @classmethod
     def expect_not_equal(cls, actual, not_expected, message=None):
         try:
             assert actual != not_expected, message
-            cls.logger.info(
+            cls.log_info(
                 f"Expectation passed: Actual value '{actual}' is not equal to Not Expected value '{not_expected}'")
         except AssertionError as e:
-            cls.logger.error(f"Expectation failed: {str(e)}")
+            cls.log_error(f"Expectation failed: {str(e)}")
             raise AssertionError(str(e))
 
     @classmethod
     def exists(cls, func, **args) -> bool:
-        loop_wait = .05
+        loop_wait = 0.05
         timeout = Constants.default_throttle
         params = dict()
         for key, val in args.items():
@@ -854,7 +837,6 @@ class BaseClass:
                 time.sleep(loop_wait)
 
         return found
-
     # same as exists but throws an actual assert error if not found
 
     @classmethod
@@ -963,8 +945,7 @@ class BaseClass:
         result = cls.exists(expr, timeout=timeout)
 
         if result is not True:
-            # Assuming logger_adapter is an instance of LoggerAdapter
-            cls.logger_adapter.log(logging.INFO, msg=expect_message, log_take_screenshot=bool_take_screenshot)
+            cls.logger.info(logging.INFO, msg=expect_message, log_take_screenshot=bool_take_screenshot)
         return result
 
     @classmethod
