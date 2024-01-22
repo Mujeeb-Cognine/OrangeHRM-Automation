@@ -2,6 +2,7 @@ from APIUtils.AdminAPIs.UserAPIs import UserAPIs
 from APIUtils.PIMAPIs.EmployeeAPIs import EmployeeApis
 from PageFragments.AdminPageFragments.AdminPage import AdminPage
 from PageFragments.BasePageFragments.BasePageFragments import BasePageFragments
+from PageFragments.DashboardPageFragments.DashboardPage import DashboardPage
 from _Wrapper.BaseClass import BaseClass
 from BaseUtils.Dataset import Dataset
 
@@ -16,6 +17,7 @@ class TestAdmin(BaseClass):
         EmployeeApis().create_employee(last_name=test_data.last_name, first_name=test_data.first_name,
                                        middle_name=test_data.middle_name, employee_id=test_data.emp_id)
         # Navigating to the Admin Side menu.
+        DashboardPage().wait_for_load()
         BasePageFragments().navigate_to_menu(menu_name=self.s.menu.admin)
 
         AdminPage().wait_for_load()
@@ -28,8 +30,8 @@ class TestAdmin(BaseClass):
                                       password=test_data.password, confirm_password=test_data.password, save=True)
         # Verifying the Success.
         BasePageFragments().verify_success()
+        self.log_info("Verified")
 
-    # Override the admin_login fixture for this test method
     def test_user_delete(self):
         # Creating the test data.
         test_data = Dataset()

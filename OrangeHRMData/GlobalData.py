@@ -1,4 +1,4 @@
-from OrangeHRMData._BaseLocalizationClass import _BaseNoLocalizationClass
+from OrangeHRMData._BaseLocalizationClass import _BaseNoLocalizationClass, _BaseLocalizationClass
 
 
 class MenusAndSubMenus(_BaseNoLocalizationClass):

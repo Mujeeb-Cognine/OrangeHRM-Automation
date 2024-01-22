@@ -4,7 +4,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
 from APIUtils.AdminAPIs.UserAPIs import UserAPIs
 from APIUtils.PIMAPIs.EmployeeAPIs import EmployeeApis
 from BaseUtils.Dataset import Dataset
@@ -77,10 +76,14 @@ def login(request, driver):
 
         # Now, perform actions on the element
         LoginPage().run_login(username, password)
-        # driver.find_element(By.XPATH, "//input[@name='username']").send_keys(username)
-        # driver.find_element(By.XPATH, "//input[@type='password']").send_keys(password)
-        # driver.find_element(By.XPATH, "//button[@type='submit']").click()
+
+        # Use logger from BaseClass
+        BaseClass().logger.info(f"Login successful for user: {username}")
+
         yield  # This allows the test to run after login
 
     except Exception as e:
+        # Log the error
+        BaseClass().logger.error(f"Login successful for user: {username}")
+        # Print the error for visibility
         print(f"An error occurred: {e}")
