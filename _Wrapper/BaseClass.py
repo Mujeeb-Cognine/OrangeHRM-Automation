@@ -1,4 +1,7 @@
 import os
+import tempfile
+from datetime import datetime
+
 import win32clipboard
 import inspect
 import logging
@@ -15,12 +18,15 @@ from selenium.webdriver.support import expected_conditions as EC
 from OrangeHRMData.Enums import ActionKeys
 from OrangeHRMData.Strings import Strings
 from OrangeHRMData.Constants import Constants
+from _Wrapper.DefaultLogger import DefaultLog
 from _Wrapper.DriverInitialization import DriverInitialization
+from _Wrapper.Paths import Paths
 
 
 class BaseClass(DriverInitialization):
-    # Class variable to store the base_url
-    _base_url = None
+    logger_name = None  # Class attribute to store the logger name
+    _base_url = None  # Class variable to store the base_url
+    logger = DefaultLog.get(__name__)
 
     @classmethod
     def setup(cls):
@@ -30,7 +36,7 @@ class BaseClass(DriverInitialization):
     @classmethod
     def set_base_url(cls, url):
         cls._base_url = url
-        cls.log_info("set_base_url got set")
+        cls.logger.info("set_base_url got set")
 
     @classmethod
     def get_base_url(cls):
@@ -276,10 +282,19 @@ class BaseClass(DriverInitialization):
         cls.driver.refresh()
 
     @classmethod
-    def take_screenshot(cls, filename):
+    def take_screenshot(cls, test_name):
         if not cls.driver:
             raise ValueError("Driver not initialized. Call set_driver() first.")
-        cls.driver.save_screenshot(filename)
+
+        try:
+            # Save the screenshot in the sub-folder with a timestamped filename
+            screenshot_path = Paths().screenshot_path(test_name)
+            cls.driver.save_screenshot(screenshot_path)
+
+            print(f"Screenshot saved: {screenshot_path}")
+        except Exception as e:
+            print(f"Failed to take screenshot: {e}")
+
 
     @classmethod
     def get_screenshot_as_base64(cls):
@@ -679,32 +694,32 @@ class BaseClass(DriverInitialization):
     def verify_element_present(cls, element_locator):
         try:
             cls.find_element(element_locator)
-            cls.log_info(f"Element located by {element_locator} is present.")
+            cls.logger.info(f"Element located by {element_locator} is present.")
             return True
         except NoSuchElementException as e:
-            cls.log_error(f"Element located by {element_locator} is not present. {e}")
+            cls.logger.error(f"Element located by {element_locator} is not present. {e}")
             return False
         except TimeoutException as e:
-            cls.log_error(f"Timeout waiting for element located by {element_locator}. {e}")
+            cls.logger.error(f"Timeout waiting for element located by {element_locator}. {e}")
             return False
         except Exception as e:
-            cls.log_error(f"An unexpected error occurred: {e}")
+            cls.logger.error(f"An unexpected error occurred: {e}")
             return False
 
     @classmethod
     def verify_elements_present(cls, elements_locator):
         try:
             cls.is_element_displayed(elements_locator)
-            cls.log_info(f"Element located by {elements_locator} is present.")
+            cls.logger.info(f"Element located by {elements_locator} is present.")
             return True
         except NoSuchElementException as e:
-            cls.log_error(f"Element located by {elements_locator} is not present. {e}")
+            cls.logger.error(f"Element located by {elements_locator} is not present. {e}")
             return False
         except TimeoutException as e:
-            cls.log_error(f"Timeout waiting for element located by {elements_locator}. {e}")
+            cls.logger.error(f"Timeout waiting for element located by {elements_locator}. {e}")
             return False
         except Exception as e:
-            cls.log_error(f"An unexpected error occurred: {e}")
+            cls.logger.error(f"An unexpected error occurred: {e}")
             return False
 
     @classmethod
@@ -713,10 +728,10 @@ class BaseClass(DriverInitialization):
         actual_text = element.text
         try:
             assert expected_text == actual_text
-            cls.log_info(f"Text in element is as expected: {expected_text}")
+            cls.logger.info(f"Text in element is as expected: {expected_text}")
             return True
         except AssertionError:
-            cls.log_error(f"Text in element doesn't match. Expected: {expected_text}, Actual: {actual_text}")
+            cls.logger.error(f"Text in element doesn't match. Expected: {expected_text}, Actual: {actual_text}")
             return False
 
     @classmethod
@@ -725,10 +740,10 @@ class BaseClass(DriverInitialization):
         actual_value = element.get_attribute(attribute)
         try:
             assert expected_value == actual_value
-            cls.log_info(f"Attribute '{attribute}' has the expected value: {expected_value}")
+            cls.logger.info(f"Attribute '{attribute}' has the expected value: {expected_value}")
             return True
         except AssertionError:
-            cls.log_error(
+            cls.logger.error(
                 f"Attribute '{attribute}' value does not match. Expected: {expected_value}, Actual: {actual_value}")
             return False
 
@@ -736,9 +751,9 @@ class BaseClass(DriverInitialization):
     def expect_element_present(cls, element_locator):
         try:
             cls.find_element(element_locator)
-            cls.log_info(f"Element located by {element_locator} is present.")
+            cls.logger.info(f"Element located by {element_locator} is present.")
         except AssertionError:
-            cls.log_error(f"Element located by {element_locator} is not present.")
+            cls.logger.error(f"Element located by {element_locator} is not present.")
             raise AssertionError(f"Element located by {element_locator} is not present.")
 
     @classmethod
@@ -747,9 +762,9 @@ class BaseClass(DriverInitialization):
         actual_text = element.text
         try:
             assert expected_text == actual_text
-            cls.log_info(f"Text in element is as expected: {expected_text}")
+            cls.logger.info(f"Text in element is as expected: {expected_text}")
         except AssertionError:
-            cls.log_error(f"Text in element doesn't match. Expected: {expected_text}, Actual: {actual_text}")
+            cls.logger.error(f"Text in element doesn't match. Expected: {expected_text}, Actual: {actual_text}")
             raise AssertionError(f"Text in element doesn't match. Expected: {expected_text}, Actual: {actual_text}")
 
     @classmethod
@@ -758,9 +773,9 @@ class BaseClass(DriverInitialization):
         actual_value = element.get_attribute(attribute)
         try:
             assert expected_value == actual_value
-            cls.log_info(f"Attribute '{attribute}' has the expected value: {expected_value}")
+            cls.logger.info(f"Attribute '{attribute}' has the expected value: {expected_value}")
         except AssertionError:
-            cls.log_error(
+            cls.logger.error(
                 f"Attribute '{attribute}' value does not match. Expected: {expected_value}, Actual: {actual_value}")
             raise AssertionError(
                 f"Attribute '{attribute}' value does not match. Expected: {expected_value}, Actual: {actual_value}")
@@ -769,9 +784,9 @@ class BaseClass(DriverInitialization):
     def verify_equal(cls, actual, expected, message=None):
         try:
             assert actual == expected, message
-            cls.log_info(f"Verification passed: Actual value '{actual}' is equal to Expected value '{expected}'")
+            cls.logger.info(f"Verification passed: Actual value '{actual}' is equal to Expected value '{expected}'")
         except AssertionError as e:
-            cls.log_error(f"Verification failed: {str(e)}")
+            cls.logger.error(f"Verification failed: {str(e)}")
             return False
         return True
 
@@ -779,10 +794,10 @@ class BaseClass(DriverInitialization):
     def verify_not_equal(cls, actual, not_expected, message=None):
         try:
             assert actual != not_expected, message
-            cls.log_info(
+            cls.logger.info(
                 f"Verification passed: Actual value '{actual}' is not equal to Not Expected value '{not_expected}'")
         except AssertionError as e:
-            cls.log_error(f"Verification failed: {str(e)}")
+            cls.logger.error(f"Verification failed: {str(e)}")
             return False
         return True
 
@@ -790,19 +805,19 @@ class BaseClass(DriverInitialization):
     def expect_equal(cls, actual, expected, message=None):
         try:
             assert actual == expected, message
-            cls.log_info(f"Expectation passed: Actual value '{actual}' is equal to Expected value '{expected}'")
+            cls.logger.info(f"Expectation passed: Actual value '{actual}' is equal to Expected value '{expected}'")
         except AssertionError as e:
-            cls.log_error(f"Expectation failed: {str(e)}")
+            cls.logger.error(f"Expectation failed: {str(e)}")
             raise AssertionError(str(e))
 
     @classmethod
     def expect_not_equal(cls, actual, not_expected, message=None):
         try:
             assert actual != not_expected, message
-            cls.log_info(
+            cls.logger.info(
                 f"Expectation passed: Actual value '{actual}' is not equal to Not Expected value '{not_expected}'")
         except AssertionError as e:
-            cls.log_error(f"Expectation failed: {str(e)}")
+            cls.logger.error(f"Expectation failed: {str(e)}")
             raise AssertionError(str(e))
 
     @classmethod
@@ -832,11 +847,11 @@ class BaseClass(DriverInitialization):
                 found = func(**params)
             else:
                 found = func()
-
             if not found:
                 time.sleep(loop_wait)
 
         return found
+
     # same as exists but throws an actual assert error if not found
 
     @classmethod
@@ -1006,21 +1021,5 @@ class BaseClass(DriverInitialization):
         return formatted_string
 
     @classmethod
-    def log_info(cls, message):
-        cls.logger.info(message)
-
-    @classmethod
-    def log_warning(cls, message):
-        cls.logger.warning(message)
-
-    @classmethod
-    def log_error(cls, message):
-        cls.logger.error(message)
-
-    @classmethod
-    def log_exception(cls, message):
-        cls.logger.exception(message)
-
-    @classmethod
-    def log_debug(cls, message):
-        cls.logger.debug(message)
+    def get_screenshot_as_file(cls, filename):
+        cls.driver.get_screenshot_as_file(filename)

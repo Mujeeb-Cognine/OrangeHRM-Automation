@@ -3,25 +3,22 @@ import os
 import tempfile
 from datetime import datetime
 
+from _Wrapper.Paths import Paths
+
 
 class DefaultLog(logging.LoggerAdapter):
 
     @staticmethod
-    def get(level=logging.INFO):
-        log_folder_path = os.path.join(tempfile.gettempdir(), 'OrgHRM_Automation_Logs')
-        if not os.path.exists(log_folder_path):
-            os.makedirs(log_folder_path)
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        test_name = "OrangeHRM_TestCases_Run"
-        log_file_path = os.path.join(log_folder_path, f'{test_name}_{timestamp}.log')
+    def get(logger_name, level=logging.INFO):
+        log_file_path = Paths().loggers_path()
 
-        # Configure logging to write to both console and file
+        # Configure logging to write to file
         logging.basicConfig(filename=log_file_path, level=level,
-                            format='%(asctime)s [%(levelname)s] %(name)s.%(funcName)s: %(message)s',
+                            format='%(asctime)s [%(levelname)s] %(funcName)s: %(message)s',
                             datefmt='%Y-%m-%d %H:%M:%S')
 
-        # Create a logger instance
-        logger = logging.getLogger()
+        # Create a logger instance with the provided name
+        logger = logging.getLogger(logger_name)
         logger.setLevel(level)
 
-        return logger
+        return DefaultLog(logger, {})

@@ -7,7 +7,6 @@ from _Wrapper.BaseClass import BaseClass
 from BaseUtils.Dataset import Dataset
 
 
-#
 class TestAdmin(BaseClass):
 
     def test_add_user(self):
@@ -30,7 +29,7 @@ class TestAdmin(BaseClass):
                                       password=test_data.password, confirm_password=test_data.password, save=True)
         # Verifying the Success.
         BasePageFragments().verify_success()
-        self.log_info("Verified")
+        self.logger.info("Verified")
 
     def test_user_delete(self):
         # Creating the test data.
