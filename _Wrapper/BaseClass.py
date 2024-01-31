@@ -1,7 +1,4 @@
 import os
-import tempfile
-from datetime import datetime
-
 import win32clipboard
 import inspect
 import logging
@@ -20,10 +17,10 @@ from OrangeHRMData.Strings import Strings
 from OrangeHRMData.Constants import Constants
 from _Wrapper.DefaultLogger import DefaultLog
 from _Wrapper.DriverInitialization import DriverInitialization
-from _Wrapper.Paths import Paths
 
 
 class BaseClass(DriverInitialization):
+
     logger_name = None  # Class attribute to store the logger name
     _base_url = None  # Class variable to store the base_url
     logger = DefaultLog.get(__name__)
@@ -282,19 +279,17 @@ class BaseClass(DriverInitialization):
         cls.driver.refresh()
 
     @classmethod
-    def take_screenshot(cls, test_name):
+    def take_screenshot(cls, screenshot_name):
         if not cls.driver:
             raise ValueError("Driver not initialized. Call set_driver() first.")
 
         try:
             # Save the screenshot in the sub-folder with a timestamped filename
-            screenshot_path = Paths().screenshot_path(test_name)
-            cls.driver.save_screenshot(screenshot_path)
+            cls.driver.save_screenshot(screenshot_name)
 
-            print(f"Screenshot saved: {screenshot_path}")
+            print(f"Screenshot saved with name: {screenshot_name}")
         except Exception as e:
             print(f"Failed to take screenshot: {e}")
-
 
     @classmethod
     def get_screenshot_as_base64(cls):
