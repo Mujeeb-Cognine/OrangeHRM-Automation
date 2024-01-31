@@ -11,6 +11,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from APIUtils.AdminAPIs.UserAPIs import UserAPIs
 from APIUtils.PIMAPIs.EmployeeAPIs import EmployeeApis
 from BaseUtils.Dataset import Dataset
+from BaseUtils.Utils import Utils
+from OrangeHRMData.Strings import Strings
 from PageFragments.LoginPageFragments.LoginPage import LoginPage
 from _Wrapper.BaseClass import BaseClass
 from OrangeHRMData.Constants import Constants
@@ -94,34 +96,78 @@ def login(request, driver_fixture):
         print(f"An error occurred: {e}")
 
 
-@pytest.hookimpl(hookwrapper=True)
-def pytest_runtest_makereport(item, call):
-    timestamp = datetime.now().strftime('%H-%M-%S')
-    pytest_html = item.config.pluginmanager.getplugin('html')
+#
+# @pytest.hookimpl(hookwrapper=True)
+# def pytest_runtest_makereport(item, call):
+#     timestamp = datetime.now().strftime('%H-%M-%S')
+#     pytest_html = item.config.pluginmanager.getplugin('html')
+#     outcome = yield
+#     report = outcome.get_result()
+#     extra = getattr(report, 'extra', [])
+#
+#     if report.when == 'call' and report.failed:
+#         # Get the test name from the item
+#
+#         extra.append(pytest_html.extras.url("http://www.example.com/"))
+#         xfail = hasattr(report, "wasxfail")
+#         if (report.skipped and xfail) or (report.failed and not xfail):
+#             test_name = item.name
+#
+#             # Take a screenshot using the BaseClass method
+#             screenshot_path = BaseClass.take_screenshot(test_name)
+#
+#             base_folder = os.path.join(tempfile.gettempdir(), 'OrgHRM_Automation_Tests_Screenshot')
+#             os.makedirs(base_folder, exist_ok=True)
+#
+#             # Use the screenshot path from the take_screenshot method
+#
+#             # only add additional html on failure
+#             extra.append(pytest_html.extras.html("<div>Additional HTML</div>"))
+#             extra.append(pytest_html.extras.image(screenshot_path))
+#
+#         report.extra = extra
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_configure(config):
+    sc_folder_path = os.path.join(tempfile.gettempdir(), 'OrgHRM_Automation_Reports')
+    if not os.path.exists(sc_folder_path):
+        os.makedirs(sc_folder_path)
+    config.option.htmlpath = (
+            os.path.join(tempfile.gettempdir(),
+                         'OrgHRM_Automation_Screenshots') + "/" + "reports/" + datetime.now().strftime(
+        "%d-%m-%Y %H-%M-%S") + ".html"
+    )
+
+
+@pytest.mark.hookwrapper
+def pytest_runtest_makereport(item):
+    """
+        Extends the PyTest Plugin to take and embed screenshot in html report, whenever test fails.
+        :param item:
+    """
+    pytest_html = item.config.pluginmanager.getplugin("html")
     outcome = yield
     report = outcome.get_result()
-    extra = getattr(report, 'extra', [])
+    extra = getattr(report, "extra", [])
 
-    if report.when == 'call' and report.failed:
-        # Get the test name from the item
+    if report.when == "call" or report.when == "setup":
 
-        extra.append(pytest_html.extras.url("http://www.example.com/"))
         xfail = hasattr(report, "wasxfail")
+
         if (report.skipped and xfail) or (report.failed and not xfail):
-            test_name = item.name
-
-            # Take a screenshot using the BaseClass method
-            screenshot_path = BaseClass.take_screenshot(test_name)
-
-            base_folder = os.path.join(tempfile.gettempdir(), 'OrgHRM_Automation_Tests_Screenshot')
-            os.makedirs(base_folder, exist_ok=True)
-
-            # Use the screenshot path from the take_screenshot method
-
-            # only add additional html on failure
-            extra.append(pytest_html.extras.html("<div>Additional HTML</div>"))
-            extra.append(pytest_html.extras.image(screenshot_path))
-
-        # ... (other code)
-
+            report_datetime = Utils().date.get_datetime_string().replace("-", "_").replace(":", "_").replace(" ", "_")
+            test_name = report.nodeid.replace("::", "_").replace("/", "\\").replace(".py",
+                                                                                    "") + "_" + report_datetime + ".png"
+            file_name = Paths().report_and_screenshot_path(test_name)
+            _capture_screenshot(file_name)
+            if file_name:
+                html = (
+                        '<div><img src="%s" alt="screenshot" style="width:304px;height:228px;" '
+                        'onclick="window.open(this.src)" align="right"/></div>' % file_name
+                )
+                extra.append(pytest_html.extras.html(html))
         report.extra = extra
+
+
+def _capture_screenshot(name):
+    BaseClass.get_screenshot_as_file(name)
