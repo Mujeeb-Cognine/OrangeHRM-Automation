@@ -12,6 +12,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
+from BaseUtils.Utils import Utils
 from OrangeHRMData.Enums import ActionKeys
 from OrangeHRMData.Strings import Strings
 from OrangeHRMData.Constants import Constants
@@ -29,6 +31,7 @@ class BaseClass(DriverInitialization):
     def setup(cls):
         cls.s = Strings()
         cls.const = Constants()
+        cls.utils = Utils()
 
     @classmethod
     def set_base_url(cls, url):
