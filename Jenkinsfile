@@ -18,7 +18,9 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    sh "python${PYTHON_VERSION} -m pip install -r requirements.txt"
+                    // Create and activate a virtual environment
+                    sh "python${PYTHON_VERSION} -m venv venv"
+                    sh "source venv/bin/activate && pip install -r requirements.txt"
                 }
             }
         }
@@ -26,9 +28,17 @@ pipeline {
         stage('Run Tests and Generate HTML Report') {
             steps {
                 script {
-                    sh "pytest --browser_name chrome --environment default_env --html=report.html"
+                    // Use the virtual environment for running tests
+                    sh "source venv/bin/activate && pytest --browser_name chrome --environment default_env --html=report.html"
                 }
-                publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: '.', reportFiles: 'report.html'])
+                // Print the URL of the HTML report to the Jenkins console log
+                script {
+                    def buildUrl = env.BUILD_URL
+                    def reportUrl = "${buildUrl}HTML_Report/"
+                    echo "HTML Report URL: ${reportUrl}"
+                }
+                // Publish the HTML report as part of the build results
+                publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: '.', reportFiles: 'report.html', reportName: 'HTML Report'])
             }
         }
     }
