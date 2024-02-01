@@ -1,7 +1,6 @@
 import os
 import tempfile
 import pytest
-import pytest_html
 
 from datetime import datetime
 from selenium import webdriver
@@ -12,7 +11,6 @@ from APIUtils.AdminAPIs.UserAPIs import UserAPIs
 from APIUtils.PIMAPIs.EmployeeAPIs import EmployeeApis
 from BaseUtils.Dataset import Dataset
 from BaseUtils.Utils import Utils
-from OrangeHRMData.Strings import Strings
 from PageFragments.LoginPageFragments.LoginPage import LoginPage
 from _Wrapper.BaseClass import BaseClass
 from OrangeHRMData.Constants import Constants
@@ -134,7 +132,7 @@ def pytest_configure(config):
         os.makedirs(sc_folder_path)
     config.option.htmlpath = (
             os.path.join(tempfile.gettempdir(),
-                         'OrgHRM_Automation_Screenshots') + "/" + "reports/" + datetime.now().strftime(
+                         'OrgHRM_Automation_Reports') + "/" + "reports/" + datetime.now().strftime(
         "%d-%m-%Y %H-%M-%S") + ".html"
     )
 
