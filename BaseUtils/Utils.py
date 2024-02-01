@@ -7,6 +7,9 @@ import random
 
 class Utils(object):
 
+    def __init__(self):
+        self.__date = None
+
     @property
     def date(self):
         try:

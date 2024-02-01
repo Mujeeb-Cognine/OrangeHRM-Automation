@@ -1,7 +1,6 @@
 import os
 import tempfile
 import pytest
-import pytest_html
 
 from datetime import datetime
 from selenium import webdriver
@@ -11,8 +10,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from APIUtils.AdminAPIs.UserAPIs import UserAPIs
 from APIUtils.PIMAPIs.EmployeeAPIs import EmployeeApis
 from BaseUtils.Dataset import Dataset
-from BaseUtils.Utils import Utils
-from OrangeHRMData.Strings import Strings
 from PageFragments.LoginPageFragments.LoginPage import LoginPage
 from _Wrapper.BaseClass import BaseClass
 from OrangeHRMData.Constants import Constants
@@ -96,37 +93,6 @@ def login(request, driver_fixture):
         print(f"An error occurred: {e}")
 
 
-#
-# @pytest.hookimpl(hookwrapper=True)
-# def pytest_runtest_makereport(item, call):
-#     timestamp = datetime.now().strftime('%H-%M-%S')
-#     pytest_html = item.config.pluginmanager.getplugin('html')
-#     outcome = yield
-#     report = outcome.get_result()
-#     extra = getattr(report, 'extra', [])
-#
-#     if report.when == 'call' and report.failed:
-#         # Get the test name from the item
-#
-#         extra.append(pytest_html.extras.url("http://www.example.com/"))
-#         xfail = hasattr(report, "wasxfail")
-#         if (report.skipped and xfail) or (report.failed and not xfail):
-#             test_name = item.name
-#
-#             # Take a screenshot using the BaseClass method
-#             screenshot_path = BaseClass.take_screenshot(test_name)
-#
-#             base_folder = os.path.join(tempfile.gettempdir(), 'OrgHRM_Automation_Tests_Screenshot')
-#             os.makedirs(base_folder, exist_ok=True)
-#
-#             # Use the screenshot path from the take_screenshot method
-#
-#             # only add additional html on failure
-#             extra.append(pytest_html.extras.html("<div>Additional HTML</div>"))
-#             extra.append(pytest_html.extras.image(screenshot_path))
-#
-#         report.extra = extra
-
 @pytest.hookimpl(tryfirst=True)
 def pytest_configure(config):
     sc_folder_path = os.path.join(tempfile.gettempdir(), 'OrgHRM_Automation_Reports')
@@ -134,9 +100,8 @@ def pytest_configure(config):
         os.makedirs(sc_folder_path)
     config.option.htmlpath = (
             os.path.join(tempfile.gettempdir(),
-                         'OrgHRM_Automation_Screenshots') + "/" + "reports/" + datetime.now().strftime(
-        "%d-%m-%Y %H-%M-%S") + ".html"
-    )
+                         'OrgHRM_Automation_Reports') + "/" + "reports/" + datetime.now().
+            strftime("%d-%m-%Y %H-%M-%S") + ".html")
 
 
 @pytest.mark.hookwrapper
@@ -155,7 +120,8 @@ def pytest_runtest_makereport(item):
         xfail = hasattr(report, "wasxfail")
 
         if (report.skipped and xfail) or (report.failed and not xfail):
-            report_datetime = Utils().date.get_datetime_string().replace("-", "_").replace(":", "_").replace(" ", "_")
+            report_datetime = (datetime.now().strftime("%m-%d-%y %H:%M:%S").replace("-", "_").
+                               replace(":", "_").replace(" ", "_"))
             test_name = report.nodeid.replace("::", "_").replace("/", "\\").replace(".py",
                                                                                     "") + "_" + report_datetime + ".png"
             file_name = Paths().report_and_screenshot_path(test_name)

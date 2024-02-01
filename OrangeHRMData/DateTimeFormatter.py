@@ -400,3 +400,10 @@ class DateTimeFormatter(_BaseLocalizationClass):
         """
         return dt.strftime('%m/%d/%Y, %H:%M')
 
+    @staticmethod
+    def notes_report_time_stamp_long(dt):
+        # No Leading Zeros hours, month or day
+        # Full length Weekday
+        return '{standard_long_date} {time} {utc}'.format(standard_long_date=DateTimeFormatter.standard_long(dt),
+                                                          time=DateTimeFormatter.time_short(dt),
+                                                          utc=DateTimeFormatter.utc(dt))
