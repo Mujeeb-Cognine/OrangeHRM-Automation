@@ -20,9 +20,9 @@ pipeline {
                 script {
                     // Create and activate a virtual environment
                     def venvPath = "${WORKSPACE}/venv"
-                    sh "python${PYTHON_VERSION} -m venv ${venvPath}"
+                    bat "python -m venv ${venvPath}"
                     // Activate the virtual environment and install dependencies
-                    sh "source ${venvPath}/bin/activate && pip install -r requirements.txt"
+                    bat "${venvPath}\\Scripts\\activate && pip install -r requirements.txt"
                 }
             }
         }
@@ -31,7 +31,7 @@ pipeline {
             steps {
                 script {
                     // Run tests with pytest and generate HTML report
-                    sh "source ${WORKSPACE}/venv/bin/activate && pytest --browser_name chrome --environment default_env --html=report.html"
+                    bat "${WORKSPACE}/venv/Scripts/activate && pytest --browser_name chrome --environment default_env --html=report.html"
                 }
                 // Print the URL of the HTML report to the Jenkins console log
                 script {
