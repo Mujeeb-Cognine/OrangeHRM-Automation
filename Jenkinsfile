@@ -18,9 +18,11 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    // Create and activate a virtual environment
+                    // Create and activate a virtual environment using virtualenv
                     def venvPath = "${WORKSPACE}/venv"
-                    bat "python -m venv ${venvPath}"
+                    bat "python -m pip install --upgrade pip"
+                    bat "python -m pip install virtualenv"
+                    bat "python -m virtualenv ${venvPath}"
                     // Activate the virtual environment and install dependencies
                     bat "${venvPath}\\Scripts\\activate && pip install -r requirements.txt"
                 }
