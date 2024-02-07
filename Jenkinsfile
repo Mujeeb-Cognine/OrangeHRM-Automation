@@ -2,48 +2,42 @@ pipeline {
     agent any
 
     environment {
-        CHROME_DRIVER_VERSION = '121.0.6167.140' // Update with the latest version
-        PYTHON_VERSION = '3.12.1'  // Update with your Python version
+        CUSTOM_PYTHON_PATH = 'C:\\Users\\Mujeeb Rahaman\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
     }
 
     stages {
-        stage('Checkout') {
+        stage('Setup') {
             steps {
                 script {
-                    checkout scm
+                    // Create a virtual environment
+                    bat "\"${CUSTOM_PYTHON_PATH}\" -m venv env"
+
+                    // Activate the virtual environment
+                    bat "call env\\Scripts\\activate.bat"
+
+                    // Install dependencies
+                    bat "\"${CUSTOM_PYTHON_PATH}\" -m pip install -r requirements.txt"
+
+                    // Install chromedriver
+                    bat "sbase install chromedriver latest"
                 }
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Run Tests') {
             steps {
                 script {
-                    // Create and activate a virtual environment using virtualenv
-                    def venvPath = "${WORKSPACE}/venv"
-                    bat "python -m pip install --upgrade pip"
-                    bat "python -m pip install virtualenv"
-                    bat "python -m virtualenv ${venvPath}"
-                    // Activate the virtual environment and install dependencies
-                    bat "${venvPath}\\Scripts\\activate && pip install -r requirements.txt"
+                    // Run pytest with headless option
+                    bat "\"${CUSTOM_PYTHON_PATH}\" -m pytest --junit-xml=report.xml --headless"
                 }
             }
         }
+    }
 
-        stage('Run Tests and Generate HTML Report') {
-            steps {
-                script {
-                    // Run tests with pytest and generate HTML report
-                    bat "${WORKSPACE}/venv/Scripts/activate && pytest --browser_name chrome --environment default_env --html=report.html"
-                }
-                // Print the URL of the HTML report to the Jenkins console log
-                script {
-                    def buildUrl = env.BUILD_URL
-                    def reportUrl = "${buildUrl}HTML_Report/"
-                    echo "HTML Report URL: ${reportUrl}"
-                }
-                // Publish the HTML report as part of the build results
-                publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: '.', reportFiles: 'report.html', reportName: 'HTML Report'])
-            }
+    post {
+        always {
+            // Archive the test reports
+            archiveArtifacts 'report.xml'
         }
     }
 }
