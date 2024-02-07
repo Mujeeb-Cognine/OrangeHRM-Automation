@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         CUSTOM_PYTHON_PATH = 'C:\\Users\\Mujeeb Rahaman\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
+        CHROMEDRIVER_VERSION = 'latest'
     }
 
     stages {
@@ -18,8 +19,13 @@ pipeline {
                     // Install dependencies
                     bat "\"${CUSTOM_PYTHON_PATH}\" -m pip install -r requirements.txt"
 
-                    // Install chromedriver
-                    bat "sbase install chromedriver latest"
+                    // Download and install chromedriver
+                    def chromedriverUrl = "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_win32.zip"
+                    bat "powershell -Command Invoke-WebRequest -Uri ${chromedriverUrl} -OutFile chromedriver.zip"
+                    bat "powershell -Command Expand-Archive -Path chromedriver.zip -DestinationPath ."
+
+                    // Add chromedriver to PATH
+                    bat "setx PATH \"%PATH%;${env.WORKSPACE}\\chromedriver.exe\""
                 }
             }
         }
