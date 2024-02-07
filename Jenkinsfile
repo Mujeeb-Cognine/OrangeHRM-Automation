@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         CUSTOM_PYTHON_PATH = 'C:\\Users\\Mujeeb Rahaman\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
-        CHROMEDRIVER_VERSION = 'latest'
     }
 
     stages {
@@ -19,14 +18,8 @@ pipeline {
                     // Install dependencies
                     bat "\"${CUSTOM_PYTHON_PATH}\" -m pip install -r requirements.txt"
 
-                    // Download chromedriver from a mirror using TLS 1.2
-                    def chromedriverUrl = "https://npm.taobao.org/mirrors/chromedriver/${CHROMEDRIVER_VERSION}/chromedriver_win32.zip"
-                    def downloadCommand = "powershell -Command [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri ${chromedriverUrl} -OutFile chromedriver.zip"
-                    bat downloadCommand
-                    bat "powershell -Command Expand-Archive -Path chromedriver.zip -DestinationPath ."
-
-                    // Add chromedriver to PATH
-                    bat "setx PATH \"%PATH%;${env.WORKSPACE}\\chromedriver.exe\""
+                    // Install chromedriver
+                    // bat "sbase install chromedriver latest"
                 }
             }
         }
