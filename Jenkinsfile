@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        CUSTOM_PYTHON_PATH = 'C:\\path\\to\\your\\custom\\python.exe'
+        CUSTOM_PYTHON_PATH = 'C:\\Users\\Mujeeb Rahaman\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
         CHROMEDRIVER_VERSION = 'latest'
     }
 
