@@ -28,7 +28,7 @@ pipeline {
             steps {
                 script {
                     // Run pytest with headless option
-                    bat "\"${CUSTOM_PYTHON_PATH}\" -m pytest --html-report=report.html"
+                    bat "\"${CUSTOM_PYTHON_PATH}\" -m pytest --junit-xml=report.xml"
                 }
             }
         }
@@ -38,6 +38,10 @@ pipeline {
         always {
             // Archive the test reports
             archiveArtifacts 'report.xml'
+        }
+        success {
+            // Publish JUnit test result report on successful build
+            junit 'report.xml'
         }
     }
 }
