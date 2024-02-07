@@ -28,7 +28,7 @@ pipeline {
             steps {
                 script {
                     // Run pytest with headless option
-                    bat "\"${CUSTOM_PYTHON_PATH}\" -m pytest --junit-xml=report.xml --headless"
+                    bat "\"${CUSTOM_PYTHON_PATH}\" -m pytest --junit-xml=report.xml tests --headless"
                 }
             }
         }
