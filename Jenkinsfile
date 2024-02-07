@@ -19,7 +19,7 @@ pipeline {
                     bat "\"${CUSTOM_PYTHON_PATH}\" -m pip install -r requirements.txt"
 
                     // Install chromedriver
-                    bat "sbase install chromedriver latest"
+                    // bat "sbase install chromedriver latest"
                 }
             }
         }
