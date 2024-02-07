@@ -20,8 +20,8 @@ pipeline {
                     bat "\"${CUSTOM_PYTHON_PATH}\" -m pip install -r requirements.txt"
 
                     // Download chromedriver from a mirror
-                    def chromedriverUrl = "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_win32.zip"
-                    def downloadCommand = "powershell -Command [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri ${chromedriverUrl} -OutFile chromedriver.zip"
+                    def chromedriverUrl = "https://npm.taobao.org/mirrors/chromedriver/${CHROMEDRIVER_VERSION}/chromedriver_win32.zip"
+                    def downloadCommand = "powershell -Command Invoke-WebRequest -Uri ${chromedriverUrl} -OutFile chromedriver.zip"
                     bat downloadCommand
                     bat "powershell -Command Expand-Archive -Path chromedriver.zip -DestinationPath ."
 
