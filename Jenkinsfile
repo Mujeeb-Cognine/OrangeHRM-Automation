@@ -49,6 +49,7 @@ pipeline {
                 recipientProviders: [[$class: 'RequestorRecipientProvider']],
                 to: "mujeeb.rahaman@cognine.com", // Additional recipient
                 presendScript: readFile('C:\\Users\\Mujeeb Rahaman\\PycharmProjects\\OrangeHRM-AutomationSuite\\TestPass-email-template.groovy')
+
             )
         }
         failure {
