@@ -42,18 +42,18 @@ pipeline {
         success {
             // Publish JUnit test result report on successful build
             junit 'report.xml'
-            // Send email notification in case of success
+            // Send email notification in case of Success
             emailext (
-                subject: "Automation Job Passed: \${BUILD_TAG}",
-                body: "The Automation job \${JOB_NAME} Passed Successfully.",
+                subject: "Job Passed: \${BUILD_TAG}",
+                body: "The job \${JOB_NAME} Passed.",
                 to: "mujeeb.rahaman@cognine.com"
             )
         }
         failure {
             // Send email notification in case of failure
             emailext (
-                subject: "Automation Job failed: \${BUILD_TAG}",
-                body: "The Automation job \${JOB_NAME} failed. Please check the build logs.",
+                subject: "Job failed: \${BUILD_TAG}",
+                body: "The job \${JOB_NAME} failed. Please check the build logs.",
                 to: "mujeeb.rahaman@cognine.com"
             )
         }
