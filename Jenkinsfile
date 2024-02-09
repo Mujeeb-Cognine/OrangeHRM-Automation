@@ -42,19 +42,23 @@ pipeline {
         success {
             // Publish JUnit test result report on successful build
             junit 'report.xml'
-            // Send email notification in case of success
+            // Send email notification in case of Success using Email Extension Template Plugin
             emailext (
-                subject: "Automation Job Passed: \${BUILD_TAG}",
-                body: "The Automation job \${JOB_NAME} Passed Successfully.",
-                to: "mujeeb.rahaman@cognine.com"
+                subject: "Job Passed: \${BUILD_TAG}",
+                body: "The job \${JOB_NAME} passed. Please check the build logs.",
+                recipientProviders: [[$class: 'RequestorRecipientProvider']],
+                to: "mujeeb.rahaman@cognine.com", // Additional recipient
+                presendScript: readFile('C:\\Users\\Mujeeb Rahaman\\PycharmProjects\\OrangeHRM-AutomationSuite\\TestPass-email-template.groovy')
             )
         }
         failure {
-            // Send email notification in case of failure
+            // Send email notification in case of failure using Email Extension Template Plugin
             emailext (
-                subject: "Automation Job failed: \${BUILD_TAG}",
-                body: "The Automation job \${JOB_NAME} failed. Please check the build logs.",
-                to: "mujeeb.rahaman@cognine.com"
+                subject: "Job failed: \${BUILD_TAG}",
+                body: "The job \${JOB_NAME} failed. Please check the build logs.",
+                recipientProviders: [[$class: 'RequestorRecipientProvider']],
+                to: "mujeeb.rahaman@cognine.com", // Additional recipient
+                presendScript: readFile('C:\\Users\\Mujeeb Rahaman\\PycharmProjects\\OrangeHRM-AutomationSuite\\TestFail-email-template.groovy')
             )
         }
     }
