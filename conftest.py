@@ -93,38 +93,6 @@ def login(request, driver_fixture):
         # Print the error for visibility
         print(f"An error occurred: {e}")
 
-
-#
-# @pytest.hookimpl(hookwrapper=True)
-# def pytest_runtest_makereport(item, call):
-#     timestamp = datetime.now().strftime('%H-%M-%S')
-#     pytest_html = item.config.pluginmanager.getplugin('html')
-#     outcome = yield
-#     report = outcome.get_result()
-#     extra = getattr(report, 'extra', [])
-#
-#     if report.when == 'call' and report.failed:
-#         # Get the test name from the item
-#
-#         extra.append(pytest_html.extras.url("http://www.example.com/"))
-#         xfail = hasattr(report, "wasxfail")
-#         if (report.skipped and xfail) or (report.failed and not xfail):
-#             test_name = item.name
-#
-#             # Take a screenshot using the BaseClass method
-#             screenshot_path = BaseClass.take_screenshot(test_name)
-#
-#             base_folder = os.path.join(tempfile.gettempdir(), 'OrgHRM_Automation_Tests_Screenshot')
-#             os.makedirs(base_folder, exist_ok=True)
-#
-#             # Use the screenshot path from the take_screenshot method
-#
-#             # only add additional html on failure
-#             extra.append(pytest_html.extras.html("<div>Additional HTML</div>"))
-#             extra.append(pytest_html.extras.image(screenshot_path))
-#
-#         report.extra = extra
-
 @pytest.hookimpl(tryfirst=True)
 def pytest_configure(config):
     sc_folder_path = os.path.join(tempfile.gettempdir(), 'OrgHRM_Automation_Reports')
