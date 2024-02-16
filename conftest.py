@@ -17,8 +17,8 @@ from OrangeHRMData.Constants import Constants
 from _Wrapper.Paths import Paths
 
 
-@pytest.fixture
-def base_url(request):
+@pytest.fixture(scope="session")
+def orghrm_base_url(request):
     env = request.config.getoption("--environment")
     if env == "dev":
         return os.getenv("dev_env")
@@ -37,7 +37,7 @@ def pytest_addoption(parser):
 
 
 @pytest.fixture(scope="function", autouse=True)
-def driver_fixture(request, base_url):
+def driver_fixture(request, orghrm_base_url):
     browser_name = request.config.getoption("browser_name").lower()
 
     if browser_name == "chrome":
@@ -51,7 +51,7 @@ def driver_fixture(request, base_url):
 
     # Set the driver in the BaseFragment class
     BaseClass().set_driver(driver)
-    BaseClass().set_base_url(base_url)
+    BaseClass().set_base_url(orghrm_base_url)
     BaseClass().navigate_to_url()
     yield driver  # Return the driver instance
 
@@ -93,6 +93,7 @@ def login(request, driver_fixture):
         # Print the error for visibility
         print(f"An error occurred: {e}")
 
+
 @pytest.hookimpl(tryfirst=True)
 def pytest_configure(config):
     sc_folder_path = os.path.join(tempfile.gettempdir(), 'OrgHRM_Automation_Reports')
@@ -105,11 +106,11 @@ def pytest_configure(config):
     )
 
 
-@pytest.mark.hookwrapper
+@pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item):
     """
-        Extends the PyTest Plugin to take and embed screenshot in html report, whenever test fails.
-        :param item:
+    Extends the PyTest Plugin to take and embed a screenshot in the HTML report whenever a test fails.
+    :param item:
     """
     pytest_html = item.config.pluginmanager.getplugin("html")
     outcome = yield
@@ -117,22 +118,34 @@ def pytest_runtest_makereport(item):
     extra = getattr(report, "extra", [])
 
     if report.when == "call" or report.when == "setup":
-
         xfail = hasattr(report, "wasxfail")
 
         if (report.skipped and xfail) or (report.failed and not xfail):
-            report_datetime = Utils().date.get_datetime_string().replace("-", "_").replace(":", "_").replace(" ", "_")
-            test_name = report.nodeid.replace("::", "_").replace("/", "\\").replace(".py",
-                                                                                    "") + "_" + report_datetime + ".png"
-            file_name = Paths().report_and_screenshot_path(test_name)
-            _capture_screenshot(file_name)
-            if file_name:
-                html = (
-                        '<div><img src="%s" alt="screenshot" style="width:304px;height:228px;" '
-                        'onclick="window.open(this.src)" align="right"/></div>' % file_name
-                )
-                extra.append(pytest_html.extras.html(html))
-        report.extra = extra
+            try:
+                # Attempt to get the report datetime
+                if Utils() and Utils().date:
+                    report_datetime = Utils().date.get_datetime_string().replace("-", "_").replace(":",
+                                                                                                          "_").replace(
+                        " ", "_")
+                else:
+                    raise ValueError("Error: Unable to get report datetime. Check Utils initialization.")
+
+                test_name = report.nodeid.replace("::", "_").replace("/", "\\").replace(".py",
+                                                                                        "") + "_" + report_datetime + ".png"
+                file_name = Paths().report_and_screenshot_path(test_name)
+                _capture_screenshot(file_name)
+
+                if file_name:
+                    html = (
+                            '<div><img src="%s" alt="screenshot" style="width:304px;height:228px;" '
+                            'onclick="window.open(this.src)" align="right"/></div>' % file_name
+                    )
+                    extra.append(pytest_html.extras.html(html))
+            except Exception as e:
+                # Log the error
+                print(f"An error occurred: {e}")
+
+        report.extras = extra
 
 
 def _capture_screenshot(name):

@@ -42,7 +42,7 @@ class _BaseLocalizationClass(object):
         }
 
         if os_locale is None:
-            os_locale = locale.getdefaultlocale()[0]
+            os_locale = locale.getlocale()[0]
             locale.setlocale(locale.LC_ALL, '')
         elif os_locale.lower() in windows_locale_map:
             try:

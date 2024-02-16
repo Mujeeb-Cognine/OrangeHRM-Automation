@@ -94,7 +94,7 @@ class DateTimeParser(_BaseLocalizationClass):
         # Due to how babel.dates.parse_date works this shouldn't need to be re-implemented in another locale file
         # Use where we previously used self.s.dt.XXXX if possible
         # Broadly, meant to for date strings made up only of ints and standard separators (period, comma, hyphen)
-        t = babel.dates.parse_date(string, locale=locale.getdefaultlocale()[0])
+        t = babel.dates.parse_date(string, locale=locale.getlocale()[0])
         return datetime.datetime.combine(t, datetime.time.min)
 
     @staticmethod

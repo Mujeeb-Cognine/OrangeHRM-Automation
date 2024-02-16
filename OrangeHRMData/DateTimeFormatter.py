@@ -63,6 +63,10 @@ class DateTimeFormatter(_BaseLocalizationClass):
         return dt.strftime('%B %d, %Y')
 
     @staticmethod
+    def current_date_range(dt):
+        return DateTimeFormatter.short_input(dt)
+
+    @staticmethod
     def date_picker_flyout(dt):
         return '{dt:%b} {dt.day}, {dt.year}'.format(dt=dt)
 
@@ -192,6 +196,14 @@ class DateTimeFormatter(_BaseLocalizationClass):
     @staticmethod
     def short(dt):
         return '{dt.month}/{dt.day}/{dt.year}'.format(dt=dt)  # 1/4/2022
+
+    @staticmethod
+    def report_time_stamp_long(dt):
+        # No Leading Zeros hours, month or day
+        # Full length Weekday
+        return '{standard_long_date} {time} {utc}'.format(standard_long_date=DateTimeFormatter.standard_long(dt),
+                                                          time=DateTimeFormatter.time_short(dt),
+                                                          utc=DateTimeFormatter.utc(dt))
 
     @staticmethod
     def short_date_time(dt):
