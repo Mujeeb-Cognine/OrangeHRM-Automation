@@ -24,23 +24,23 @@ from _Wrapper.DriverInitialization import DriverInitialization
 class BaseClass(DriverInitialization):
 
     logger_name = None  # Class attribute to store the logger name
-    _base_url = None  # Class variable to store the base_url
+    orghrm_base_url = None  # Class variable to store the base_url
     logger = DefaultLog.get(__name__)
 
     @classmethod
-    def setup(cls):
+    def setup_method(cls):
         cls.s = Strings()
         cls.const = Constants()
         cls.utils = Utils()
 
     @classmethod
     def set_base_url(cls, url):
-        cls._base_url = url
+        cls.orghrm_base_url = url
         cls.logger.info("set_base_url got set")
 
     @classmethod
     def get_base_url(cls):
-        return cls._base_url
+        return cls.orghrm_base_url
 
     @classmethod
     def get_bearer_token(cls):

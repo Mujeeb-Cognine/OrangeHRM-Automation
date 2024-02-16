@@ -134,7 +134,7 @@ def get_today_with_months_added(months_added=0, dt=False, day_offset=None, initi
 
 
 def get_date_with_weekday_time_utc(days_added=0, time_zone=s.time_zone.us_eastern,
-                                   format_func=s.dtf.notes_report_time_stamp_long, hours=0, minute=0):
+                                   format_func=s.dtf.report_time_stamp_long, hours=0, minute=0):
 
     # Example default output: Wednesday 02/20/2019 12:00 AM UTC-05
     return format_func(datetime.datetime.now(pytz.timezone(time_zone)).replace(hour=hours, minute=minute) +
@@ -272,7 +272,7 @@ def get_unique_dollar_amount():
     return float('{0}.{1}'.format(str(random.randint(1, 500)), str(random.randint(10, 99))))
 
 
-def get_current_date_range(week_offset=0, form="long", dt=False, format_func=s.dtf.time_sheet_range, day_offset=0,
+def get_current_date_range(week_offset=0, form="long", dt=False, format_func=s.dtf.current_date_range, day_offset=0,
                            zero_times=False):
     """
     Returns a date range string in the format used on the Time Sheet view.
@@ -595,8 +595,8 @@ def get_raw_timestamp(t_datetime=None, t_time=None, time_zone=None, react=False,
 
 def get_calendar_month_range(first_format=s.dtf.b_d, last_format=s.dtf.b_d_Y):
     # Set locale properly due to random reset issues
-    if not locale.getdefaultlocale()[0].startswith('en_'):
-        locale.setlocale(locale.LC_ALL, locale.getdefaultlocale()[0])
+    if not locale.getlocale()[0].startswith('en_'):
+        locale.setlocale(locale.LC_ALL, locale.getlocale()[0])
 
     # Returns the month matching the calendar format
     first = get_first_day_of_month(format_func=first_format)
@@ -625,14 +625,6 @@ def number_of_days(age_string):
 
 def get_timezone():
     return time.strftime("%z", time.gmtime())
-
-
-def get_audit_trail_datetime(days_added=0, time_zone=s.time_zone.us_eastern, format_func=s.dtf.audit_trail_date_time,
-                             date_diff_check=False):
-    date = get_today_with_days_added(
-        days_added=days_added, time_zone=time_zone,
-        format_func=format_func, date_diff_check=date_diff_check)
-    return date
 
 
 def get_military_time_in_range(start_time='0:00 AM', end_time='12:00 PM', increment=15):

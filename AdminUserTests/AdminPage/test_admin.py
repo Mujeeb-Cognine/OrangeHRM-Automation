@@ -26,7 +26,7 @@ class TestAdmin(BaseClass):
         # Filling the form and saving the user.
         AdminPage().run_add_user_card(user_role=self.s.dd.admin_user_roles.admin, emp_name=test_data.full_name,
                                       status=self.s.dd.admin_status.enabled, user_name=test_data.user_name,
-                                      password=test_data.password, confirm_password=test_data.password, save=True)
+                                      password=test_data.password, confirm_password=test_data.password, save=None)
         # Verifying the Success.
         BasePageFragments().verify_success()
         self.logger.info("Verified")

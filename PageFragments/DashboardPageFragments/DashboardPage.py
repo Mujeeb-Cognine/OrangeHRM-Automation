@@ -1,6 +1,3 @@
-from selenium.common import TimeoutException
-from selenium.webdriver.support.wait import WebDriverWait
-
 from Locators.DashboardPageLocators import DashboardPageLocators
 from OrangeHRMData.Constants import Constants
 from _Wrapper.BaseClass import BaseClass

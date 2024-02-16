@@ -5,8 +5,8 @@ class BaseAPIUtils(BaseClass):
 
     def api_url(self, endpoint):
         try:
-            base_url = self.get_base_url()
-            api_url = f'{base_url}{endpoint}'
+            orghrm_base_url = self.get_base_url()
+            api_url = f'{orghrm_base_url}{endpoint}'
             self.logger.info(f"API URL generated successfully: {api_url}")
             return api_url
         except Exception as e:
