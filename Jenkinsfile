@@ -38,6 +38,7 @@ pipeline {
         always {
             // Archive the test reports
             archiveArtifacts 'report.xml'
+            junit 'report.xml'
         }
         success {
             // Publish JUnit test result report on successful build

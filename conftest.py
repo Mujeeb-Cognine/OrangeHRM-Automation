@@ -124,14 +124,14 @@ def pytest_runtest_makereport(item):
             try:
                 # Attempt to get the report datetime
                 if Utils() and Utils().date:
-                    report_datetime = Utils().date.get_datetime_string().replace("-", "_").replace(":",
-                                                                                                          "_").replace(
-                        " ", "_")
+                    report_datetime = (Utils().date.get_datetime_string().replace("-", "_").replace(":", "_").
+                                       replace(" ", "_"))
                 else:
                     raise ValueError("Error: Unable to get report datetime. Check Utils initialization.")
 
-                test_name = report.nodeid.replace("::", "_").replace("/", "\\").replace(".py",
-                                                                                        "") + "_" + report_datetime + ".png"
+                test_name = (report.nodeid.replace("::", "_").replace("/", "\\").replace(".py",
+                                                                                         "") + "_" + report_datetime +
+                             ".png")
                 file_name = Paths().report_and_screenshot_path(test_name)
                 _capture_screenshot(file_name)
 
