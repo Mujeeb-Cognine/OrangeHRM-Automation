@@ -12,11 +12,13 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        ref: main  # Specify the branch name if not using the default branch
 
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.8
+        python-version: 3.12.1
 
     - name: Install dependencies
       run: |
