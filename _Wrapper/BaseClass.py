@@ -1,5 +1,5 @@
 import os
-import win32clipboard
+# import win32clipboard
 import inspect
 import logging
 import time
