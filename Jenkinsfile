@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    triggers {
+        cron('30 4 * * *') // This will run the pipeline every day at 10:00 AM IST (4:00 AM UTC)
+    }
+
     environment {
         CUSTOM_PYTHON_PATH = 'C:\\Users\\Mujeeb Rahaman\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
     }
