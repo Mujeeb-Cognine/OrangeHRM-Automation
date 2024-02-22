@@ -13,8 +13,8 @@ pipeline {
         stage('Setup') {
             steps {
                 script {
-                    // Change ownership of /var/lib/apt/lists/ directory using sudo
-                    sh 'sudo chown jenkins:staff /var/lib/apt/lists/'
+                    // Attempt to change ownership, even if it fails
+                    sh 'chown jenkins:staff /var/lib/apt/lists/' || true
 
                     // Update package list
                     sh 'apt-get update'
