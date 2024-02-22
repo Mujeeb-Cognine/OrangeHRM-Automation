@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+
+    triggers {
+        cron('30 4 * * *') // This will run the pipeline every day at 10:00 AM IST (4:00 AM UTC)
+    }
+
+    environment {
+        CUSTOM_PYTHON_PATH = '/usr/bin/python3' // Assuming Python 3 is available on Ubuntu
+    }
+
+    stages {
+        stage('Setup') {
+            steps {
+                script {
+                    // Create a virtual environment
+                    sh "${CUSTOM_PYTHON_PATH} -m venv env"
+
+                    // Activate the virtual environment
+                    sh "source env/bin/activate"
+
+                    // Install dependencies
+                    sh "${CUSTOM_PYTHON_PATH} -m pip install -r requirements.txt"
+
+                    // Install chromedriver (if needed)
+                    // sh "sudo apt-get install chromium-chromedriver"
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    // Run pytest with headless option
+                    sh "${CUSTOM_PYTHON_PATH} -m pytest --junit-xml=report.xml"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Archive the test reports
+            archiveArtifacts 'report.xml'
+            junit 'report.xml'
+        }
+        success {
+            // Publish JUnit test result report on successful build
+            junit 'report.xml'
+        }
+    }
+}
