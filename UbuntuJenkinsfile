@@ -14,7 +14,7 @@ pipeline {
             steps {
                 script {
                     // Update package list
-                    sh 'apt-get update'
+                    // sh 'apt-get update'
 
                     // Install python3-venv package
                     sh 'apt-get install -y python3-venv'
