@@ -13,9 +13,6 @@ pipeline {
         stage('Setup') {
             steps {
                 script {
-                    // Adjust ownership of /var/lib/apt/lists/ directory without sudo
-                    sh 'chown -R jenkins:jenkins /var/lib/apt/lists/'
-
                     // Update package list
                     sh 'apt-get update'
 
