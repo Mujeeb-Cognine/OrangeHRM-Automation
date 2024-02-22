@@ -23,7 +23,7 @@ pipeline {
                     sh "${CUSTOM_PYTHON_PATH} -m venv env"
 
                     // Activate the virtual environment
-                    sh "source env/bin/activate"
+                    sh ". env/bin/activate"
 
                     // Install dependencies
                     sh "${CUSTOM_PYTHON_PATH} -m pip install -r requirements.txt"
