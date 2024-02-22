@@ -13,6 +13,10 @@ pipeline {
         stage('Setup') {
             steps {
                 script {
+                    // Grant Jenkins user permissions to access apt lists
+                    sh 'sudo usermod -aG staff jenkins'
+                    sh 'chmod 755 /var/lib/apt/lists/'
+
                     // Update package list
                     sh 'apt-get update'
 
