@@ -22,7 +22,6 @@ from _Wrapper.DriverInitialization import DriverInitialization
 
 
 class BaseClass(DriverInitialization):
-
     logger_name = None  # Class attribute to store the logger name
     orghrm_base_url = None  # Class variable to store the base_url
     logger = DefaultLog.get(__name__)
@@ -981,15 +980,14 @@ class BaseClass(DriverInitialization):
                    fail_message=cls.get_formatted_fail_message(expected, actual_value(), fail_message),
                    take_screenshot=screenshot, timeout=timeout)
 
-    class ClipboardManager:
-        @classmethod
-        def get_clipboard_data(cls):
-            clipboard_data = pyperclip.paste()
-            return clipboard_data
+    @classmethod
+    def get_clipboard_data(cls):
+        clipboard_data = pyperclip.paste()
+        return clipboard_data
 
-        @classmethod
-        def set_clipboard_data(cls, data):
-            pyperclip.copy(data)
+    @classmethod
+    def set_clipboard_data(cls, data):
+        pyperclip.copy(data)
 
     @classmethod
     def empty_lines_formatter(cls, string):
