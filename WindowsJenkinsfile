@@ -42,25 +42,7 @@ pipeline {
         always {
             // Archive the test reports
             archiveArtifacts 'report.xml'
-
-            // Publish JUnit test result report always
             junit 'report.xml'
-
-            // Archive the screenshots
-            archiveArtifacts 'screenshots/*'
-        }
-        failure {
-            script {
-                // Publish HTML reports (screenshots) only on failure using HTML Publisher plugin
-                publishHTML(target: [
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: true,
-                    reportDir: 'screenshots',
-                    reportFiles: 'index.html',
-                    reportName: 'Screenshots'
-                ])
-            }
         }
         success {
             // Publish JUnit test result report on successful build
