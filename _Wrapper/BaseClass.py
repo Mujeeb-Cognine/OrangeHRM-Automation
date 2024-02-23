@@ -1,5 +1,5 @@
 import os
-import win32clipboard
+import pyperclip
 import inspect
 import logging
 import time
@@ -22,7 +22,6 @@ from _Wrapper.DriverInitialization import DriverInitialization
 
 
 class BaseClass(DriverInitialization):
-
     logger_name = None  # Class attribute to store the logger name
     orghrm_base_url = None  # Class variable to store the base_url
     logger = DefaultLog.get(__name__)
@@ -983,17 +982,12 @@ class BaseClass(DriverInitialization):
 
     @classmethod
     def get_clipboard_data(cls):
-        win32clipboard.OpenClipboard()
-        clipboard_data = win32clipboard.GetClipboardData(win32clipboard.CF_TEXT)
-        win32clipboard.CloseClipboard()
-        return clipboard_data.decode('utf-8')
+        clipboard_data = pyperclip.paste()
+        return clipboard_data
 
     @classmethod
     def set_clipboard_data(cls, data):
-        win32clipboard.OpenClipboard()
-        win32clipboard.EmptyClipboard()
-        win32clipboard.SetClipboardData(win32clipboard.CF_TEXT, data.encode('utf-8'))
-        win32clipboard.CloseClipboard()
+        pyperclip.copy(data)
 
     @classmethod
     def empty_lines_formatter(cls, string):
