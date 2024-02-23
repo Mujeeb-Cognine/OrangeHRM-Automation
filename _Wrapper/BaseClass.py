@@ -1,5 +1,5 @@
 import os
-import win32clipboard
+import pyperclip
 import inspect
 import logging
 import time
@@ -981,19 +981,15 @@ class BaseClass(DriverInitialization):
                    fail_message=cls.get_formatted_fail_message(expected, actual_value(), fail_message),
                    take_screenshot=screenshot, timeout=timeout)
 
-    @classmethod
-    def get_clipboard_data(cls):
-        win32clipboard.OpenClipboard()
-        clipboard_data = win32clipboard.GetClipboardData(win32clipboard.CF_TEXT)
-        win32clipboard.CloseClipboard()
-        return clipboard_data.decode('utf-8')
+    class ClipboardManager:
+        @classmethod
+        def get_clipboard_data(cls):
+            clipboard_data = pyperclip.paste()
+            return clipboard_data
 
-    @classmethod
-    def set_clipboard_data(cls, data):
-        win32clipboard.OpenClipboard()
-        win32clipboard.EmptyClipboard()
-        win32clipboard.SetClipboardData(win32clipboard.CF_TEXT, data.encode('utf-8'))
-        win32clipboard.CloseClipboard()
+        @classmethod
+        def set_clipboard_data(cls, data):
+            pyperclip.copy(data)
 
     @classmethod
     def empty_lines_formatter(cls, string):
