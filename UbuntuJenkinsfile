@@ -59,10 +59,9 @@ pipeline {
         always {
             script {
                 // Stop and remove the Selenium Docker container
-                docker.image(DOCKER_IMAGE).stop()
-                docker.image(DOCKER_IMAGE).remove(force: true).withRun { container ->
-                    // Additional cleanup steps if needed
-                }
+                sh "docker stop \$(docker ps -q --filter ancestor=${DOCKER_IMAGE})"
+                sh "docker rm \$(docker ps -a -q --filter ancestor=${DOCKER_IMAGE})"
+                // Additional cleanup steps if needed
             }
             // Archive the test reports
             archiveArtifacts 'report.xml'
