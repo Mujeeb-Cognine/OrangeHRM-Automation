@@ -15,10 +15,21 @@ pipeline {
             steps {
                 script {
                     // Run the Selenium Docker container
-                    docker.image(DOCKER_IMAGE).run("-v /dev/shm:/dev/shm", "--net=host", "-d").withRun { container ->
-                        // Your existing setup steps
-                        // e.g., git clone, environment setup, etc.
+                    def seleniumContainer = docker.image(DOCKER_IMAGE).start()
+
+                    // Your existing setup steps
+                    // e.g., git clone, environment setup, etc.
+
+                    // Attach to the running container
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                        docker.image(DOCKER_IMAGE).inside {
+                            // Additional steps if needed inside the container
+                        }
                     }
+
+                    // Stop and remove the Selenium Docker container
+                    seleniumContainer.stop()
+                    seleniumContainer.remove(force: true)
                 }
             }
         }
@@ -27,28 +38,30 @@ pipeline {
             steps {
                 script {
                     // Run tests inside the Docker container
-                    docker.image(DOCKER_IMAGE).inside {
-                        // Update package list
-                        sh 'apt-get update'
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                        docker.image(DOCKER_IMAGE).inside {
+                            // Update package list
+                            sh 'apt-get update'
 
-                        // Install python3-venv package
-                        sh 'apt-get install -y python3-venv'
+                            // Install python3-venv package
+                            sh 'apt-get install -y python3-venv'
 
-                        // Create a virtual environment
-                        sh "/usr/bin/python3 -m venv ${WORKSPACE_PATH}/env"
+                            // Create a virtual environment
+                            sh "/usr/bin/python3 -m venv ${WORKSPACE_PATH}/env"
 
-                        // Activate the virtual environment
-                        sh "chmod +x ${WORKSPACE_PATH}/env/bin/activate"
-                        sh ". ${WORKSPACE_PATH}/env/bin/activate"
+                            // Activate the virtual environment
+                            sh "chmod +x ${WORKSPACE_PATH}/env/bin/activate"
+                            sh ". ${WORKSPACE_PATH}/env/bin/activate"
 
-                        // Install dependencies
-                        sh "${WORKSPACE_PATH}/env/bin/pip install -r requirements.txt"
+                            // Install dependencies
+                            sh "${WORKSPACE_PATH}/env/bin/pip install -r requirements.txt"
 
-                        // Install chromedriver (if needed)
-                        // sh "apt-get install -y chromium-chromedriver"
+                            // Install chromedriver (if needed)
+                            // sh "apt-get install -y chromium-chromedriver"
 
-                        // Run pytest with headless option
-                        sh "${WORKSPACE_PATH}/env/bin/python -m pytest --junit-xml=report.xml"
+                            // Run pytest with headless option
+                            sh "${WORKSPACE_PATH}/env/bin/python -m pytest --junit-xml=report.xml"
+                        }
                     }
                 }
             }
@@ -58,9 +71,6 @@ pipeline {
     post {
         always {
             script {
-                // Stop and remove the Selenium Docker container
-                sh "docker ps -q --filter ancestor=${DOCKER_IMAGE} | xargs -r docker stop"
-                sh "docker ps -a -q --filter ancestor=${DOCKER_IMAGE} | xargs -r docker rm"
                 // Additional cleanup steps if needed
             }
             // Archive the test reports
