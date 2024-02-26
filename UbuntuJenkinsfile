@@ -15,10 +15,16 @@ pipeline {
             steps {
                 script {
                     // Run the Selenium Docker container
-                    docker.image(DOCKER_IMAGE).run("-v /dev/shm:/dev/shm", "--net=host", "-d").withRun { container ->
-                        // Your existing setup steps
-                        // e.g., git clone, environment setup, etc.
-                    }
+                    def seleniumContainer = docker.image(DOCKER_IMAGE).run("-v /dev/shm:/dev/shm", "--net=host", "-d")
+
+                    // Provide some time for the Selenium container to start (adjust as needed)
+                    sleep(time: 30, unit: 'SECONDS')
+
+                    // Print the container ID for debugging
+                    echo "Selenium Container ID: ${seleniumContainer.id}"
+
+                    // Your existing setup steps
+                    // e.g., git clone, environment setup, etc.
                 }
             }
         }
