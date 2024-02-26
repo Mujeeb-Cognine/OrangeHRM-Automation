@@ -15,16 +15,10 @@ pipeline {
             steps {
                 script {
                     // Run the Selenium Docker container
-                    def seleniumContainer = docker.image(DOCKER_IMAGE).run("-v /dev/shm:/dev/shm", "--net=host", "-d")
-
-                    // Provide some time for the Selenium container to start (adjust as needed)
-                    sleep(time: 30, unit: 'SECONDS')
-
-                    // Print the container ID for debugging
-                    echo "Selenium Container ID: ${seleniumContainer.id}"
-
-                    // Your existing setup steps
-                    // e.g., git clone, environment setup, etc.
+                    docker.image(DOCKER_IMAGE).run("-v /dev/shm:/dev/shm", "--net=host", "-d").withRun { container ->
+                        // Your existing setup steps
+                        // e.g., git clone, environment setup, etc.
+                    }
                 }
             }
         }
@@ -65,8 +59,8 @@ pipeline {
         always {
             script {
                 // Stop and remove the Selenium Docker container
-                sh "docker stop \$(docker ps -q --filter ancestor=${DOCKER_IMAGE})"
-                sh "docker rm \$(docker ps -a -q --filter ancestor=${DOCKER_IMAGE})"
+                sh "docker ps -q --filter ancestor=${DOCKER_IMAGE} | xargs -r docker stop"
+                sh "docker ps -a -q --filter ancestor=${DOCKER_IMAGE} | xargs -r docker rm"
                 // Additional cleanup steps if needed
             }
             // Archive the test reports
