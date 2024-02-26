@@ -6,32 +6,30 @@ pipeline {
     }
 
     environment {
-        CUSTOM_PYTHON_PATH = '/usr/bin/python3' // Assuming Python 3 is available on Ubuntu
-        VIRTUAL_ENV = "${WORKSPACE}/env"
+        DOCKER_IMAGE = 'selenium/standalone-chrome:latest'
+        WORKSPACE_PATH = '/usr/src/app'
     }
 
     stages {
         stage('Setup') {
             steps {
                 script {
-                    // Update package list
-                    sh 'apt-get update'
+                    // Run the Selenium Docker container
+                    def seleniumContainer = docker.image(DOCKER_IMAGE).start()
 
-                    // Install python3-venv package
-                    sh 'apt-get install -y python3-venv'
+                    // Your existing setup steps
+                    // e.g., git clone, environment setup, etc.
 
-                    // Create a virtual environment
-                    sh "${CUSTOM_PYTHON_PATH} -m venv ${VIRTUAL_ENV}"
+                    // Attach to the running container
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                        docker.image(DOCKER_IMAGE).inside {
+                            // Additional steps if needed inside the container
+                        }
+                    }
 
-                    // Activate the virtual environment
-                    sh "chmod +x ${VIRTUAL_ENV}/bin/activate"
-                    sh ". ${VIRTUAL_ENV}/bin/activate"
-
-                    // Install dependencies
-                    sh "${VIRTUAL_ENV}/bin/pip install -r requirements.txt"
-
-                    // Install chromedriver (if needed)
-                    // sh "apt-get install -y chromium-chromedriver"
+                    // Stop and remove the Selenium Docker container
+                    seleniumContainer.stop()
+                    seleniumContainer.remove(force: true)
                 }
             }
         }
@@ -39,8 +37,32 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Run pytest with headless option
-                    sh "${VIRTUAL_ENV}/bin/python -m pytest --junit-xml=report.xml"
+                    // Run tests inside the Docker container
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                        docker.image(DOCKER_IMAGE).inside {
+                            // Update package list
+                            sh 'apt-get update'
+
+                            // Install python3-venv package
+                            sh 'apt-get install -y python3-venv'
+
+                            // Create a virtual environment
+                            sh "/usr/bin/python3 -m venv ${WORKSPACE_PATH}/env"
+
+                            // Activate the virtual environment
+                            sh "chmod +x ${WORKSPACE_PATH}/env/bin/activate"
+                            sh ". ${WORKSPACE_PATH}/env/bin/activate"
+
+                            // Install dependencies
+                            sh "${WORKSPACE_PATH}/env/bin/pip install -r requirements.txt"
+
+                            // Install chromedriver (if needed)
+                            // sh "apt-get install -y chromium-chromedriver"
+
+                            // Run pytest with headless option
+                            sh "${WORKSPACE_PATH}/env/bin/python -m pytest --junit-xml=report.xml"
+                        }
+                    }
                 }
             }
         }
@@ -48,12 +70,17 @@ pipeline {
 
     post {
         always {
+            script {
+                // Additional cleanup steps if needed
+            }
             // Archive the test reports
             archiveArtifacts 'report.xml'
             junit 'report.xml'
         }
+
         success {
-            // Publish JUnit test result report on successful build
+            // Archive the test reports
+            archiveArtifacts 'report.xml'
             junit 'report.xml'
         }
     }
