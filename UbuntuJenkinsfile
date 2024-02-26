@@ -15,7 +15,7 @@ pipeline {
             steps {
                 script {
                     // Run the Selenium Docker container
-                    docker.image(DOCKER_IMAGE).run("-v /dev/shm:/dev/shm", "--net=host", "-d")
+                    docker.image(DOCKER_IMAGE).run("-v /dev/shm:/dev/shm", "--net=host", "-d").withRun { container ->
 
                     // Your existing setup steps
                     // e.g., git clone, environment setup, etc.
@@ -60,7 +60,7 @@ pipeline {
             script {
                 // Stop and remove the Selenium Docker container
                 docker.image(DOCKER_IMAGE).stop()
-                docker.image(DOCKER_IMAGE).remove(force: true)
+                docker.image(DOCKER_IMAGE).remove(force: true).withRun { container ->
                 // Archive the test reports
                 archiveArtifacts 'report.xml'
                 junit 'report.xml'
