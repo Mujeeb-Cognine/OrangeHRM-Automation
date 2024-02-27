@@ -33,7 +33,7 @@ pipeline {
                     sh "${VIRTUAL_ENV}/bin/pip install -r requirements.txt"
 
                     // Install chromedriver (if needed)
-                    // sh "apt-get install -y chromium-chromedriver"
+                    sh "apt-get install -y chromium-chromedriver"
                 }
             }
         }
