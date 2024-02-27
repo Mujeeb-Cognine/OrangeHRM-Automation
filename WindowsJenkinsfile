@@ -46,3 +46,7 @@ pipeline {
         }
         success {
             // Publish JUnit test result report on successful build
+             junit 'report.xml'
+        }
+    }
+}
