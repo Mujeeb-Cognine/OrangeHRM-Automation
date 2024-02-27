@@ -1,16 +1,20 @@
 pipeline {
     agent any
 
-    triggers {
-        cron('30 4 * * *') // This will run the pipeline every day at 10:00 AM IST (4:00 AM UTC)
- }
-
     environment {
         CUSTOM_PYTHON_PATH = '/usr/bin/python3' // Assuming Python 3 is available on Ubuntu
         VIRTUAL_ENV = "${WORKSPACE}/env"
     }
 
     stages {
+        stage('SCM Checkout') {
+            steps {
+                script {
+                    // Your SCM checkout steps go here
+                }
+            }
+        }
+
         stage('Setup') {
             steps {
                 script {
@@ -41,3 +45,16 @@ pipeline {
                 script {
                     // Run pytest with headless option
                     sh "${VIRTUAL_ENV}/bin/python -m pytest --junit-xml=report.xml"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Archive the test reports
+            archiveArtifacts 'report.xml'
+            junit 'report.xml'
+        }
+    }
+}
